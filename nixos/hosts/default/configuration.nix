@@ -583,6 +583,12 @@ I     style=Kvantum
   services.avahi = {
     enable = true;
     nssmdns4 = true; # allow applications to resolve .local
+    openFirewall = true;
+    publish = {
+        enable = true;
+        userServices = true;
+        addresses = true;
+    };
   };
 
   # networking.enableIPv6 = false;
