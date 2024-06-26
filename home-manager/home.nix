@@ -82,6 +82,9 @@
     vivaldi
     firefox
     
+    # photo editor
+    gimp
+
     # chat
     discord
 
