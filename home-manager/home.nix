@@ -87,7 +87,10 @@
     gimp
 
     # chat
+
     discord
+    betterdiscord-installer
+    betterdiscordctl
 
     # A Wayland native snapshot editing tool, inspired by Snappy on macOS
     swappy
@@ -98,8 +101,6 @@
     # irc
     quassel
 
-    # media
-    mpv
     plex-mpv-shim
     spotify
 
