@@ -1,0 +1,36 @@
+#!/bin/sh
+
+destination=~/nixos-laptop-config
+
+# ensure folders exists
+mkdir -p $destination/nixos/dotfiles
+mkdir -p $destination/home-manager
+
+fcount=0
+
+# ignore dotfiles for the moment
+for f in $(ls /etc/nixos --ignore='dotfiles')
+do
+        echo "copying : /etc/nixos/$f"
+        cp -r /etc/nixos/$f $destination/nixos
+        fcount=$((fcount + 1)) 
+done
+
+# copy dotfiles over
+for f in $(ls --ignore='.??*' --ignore='.[^.]' --ignore='#*' /etc/nixos/dotfiles)
+do
+        echo "copying : /etc/nixos/dotfiles/$f" 
+        cp -r /etc/nixos/dotfiles/$f  $destination/nixos/dotfiles
+        fcount=$((fcount + 1)) 
+done
+
+# copy home-manager files
+for f in $(ls --ignore='.??*' --ignore='.[^.]' --ignore='#*' ~/.config/home-manager)
+do
+        echo "copying : $HOME/.config/home-manager/$f"
+        cp -r ~/.config/home-manager/$f $destination/home-manager
+        fcount=$((fcount + 1)) 
+done
+
+echo $fcount files copied to $destination
+
