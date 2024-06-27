@@ -125,6 +125,11 @@ in
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   };
 
+  programs.hyprlock.enable = true;
+
+  services.hypridle.enable = true;
+
+
 # # Enable KDE Plasma
 # services.displayManager.sddm = {
 #     enable = true;
@@ -274,7 +279,7 @@ in
     mesa
     mesa-demos
     libdrm
-    libGL
+    libGL.dev
 
     # alacritty
     kitty
@@ -351,6 +356,11 @@ in
     hyprcursor
     hyprpaper
     hyprlock
+
+    libinput
+    libinput-gestures
+    wmctrl
+    xdotool
 
 
     # screenshot with grim -l 0 -g "$(slurp)" - | wl-copy
@@ -482,6 +492,14 @@ I     style=Kvantum
     # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    # Certain features, including CLI integration and system authentication support,
+    # require enabling PolKit integration on some desktop environments (e.g. Plasma).
+    polkitPolicyOwners = [ "tm" ];
+  };
+
 
   programs.zsh.enable = true;
 
@@ -493,6 +511,7 @@ I     style=Kvantum
   programs.bash.shellAliases = {
     neofetch = "fastfetch -c neofetch";
   };
+
 
 
  # Some programs need SUID wrappers, can be configured further or are
@@ -589,6 +608,7 @@ I     style=Kvantum
         userServices = true;
         addresses = true;
     };
+            
   };
 
   # networking.enableIPv6 = false;

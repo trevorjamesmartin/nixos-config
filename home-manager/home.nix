@@ -34,6 +34,7 @@
      })
   ];
 
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -81,7 +82,7 @@
     google-chrome
     vivaldi
     firefox
-    
+
     # photo editor
     gimp
 
@@ -154,6 +155,9 @@
       source = /etc/nixos/dotfiles/waybar;
       recursive = true;
     };
+
+    ".config/libinput-gestures.conf".source = /etc/nixos/dotfiles/libinput-gestures.conf;
+  
   };
 
   # Home Manager can also manage your environment variables through

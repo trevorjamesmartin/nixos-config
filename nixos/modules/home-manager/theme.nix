@@ -1,13 +1,14 @@
 # theme.nix
 { pkgs, ...}:
 let
-  catppuccin_name = "catppuccin-frappe-blue-standard+default";
-  catppuccin-gtk = pkgs.catppuccin-gtk;
-
-  # catppuccin_cursor_name = "catppuccin-frappe-blue-cursors";
-  catppuccin_cursor_name = "catppuccin-mocha-mauve-cursors";
-
-
+  # edit catppuccin here
+  catppuccin_flavor = "frappe";
+  catppuccin_accent = "blue";
+  catppuccin_kvantum_theme = "Catppuccin-Frappe-Blue";
+  
+  # todo: check how we build these names
+  catppuccin_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard+default";
+  catppuccin_cursor_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
 in
 {
   home.packages = with pkgs; [
@@ -21,9 +22,8 @@ in
   # general settings
   catppuccin = {
     enable = true;
-    flavor = "mocha";
-    accent = "mauve";
-
+    flavor = "${catppuccin_flavor}";
+    accent = "${catppuccin_accent}";
   };
 
   programs.tmux = {
@@ -52,8 +52,8 @@ in
   gtk = {
     enable = true;
     theme = {
-      name = catppuccin_name;
-      package = catppuccin-gtk;
+      name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard+default";
+      package = pkgs.catppuccin-gtk;
     };
  
     gtk3.extraConfig = {
@@ -64,17 +64,9 @@ in
       gtk-application-prefer-dark-theme=1;
     };
     
-    # setting this more than once
-    # may causes a conflict during rebuild
-#   cursorTheme = {
-#     size = 64;
-#     name = "catppuccin-frappe-blue-cursors";
-#     package = pkgs.catppuccin-cursors.frappeBlue;
-#   };
-
     iconTheme = {
       name = "Papirus-Dark";
-    };
+    }; 
   };
 
   # qt settings
@@ -89,21 +81,20 @@ in
 
   # Generate kvantum 
   xdg.configFile."Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini {}).generate "kvantum.kvconfig" {
-    General.theme = "Catppuccin-Mocha-Mauve";
+    General.theme = catppuccin_kvantum_theme;
   };
 
   # link (missing?) gtk4 files
-  home.file.".config/gtk-4.0/gtk-dark.css".source = "${catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/gtk-dark.css";
-  home.file.".config/gtk-4.0/assets" = {
-    recursive = true;
-    source = "${catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/assets";
-  };
-
+  home.file.".config/gtk-4.0/gtk-dark.css".source = "${pkgs.catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/gtk-dark.css";
+  #home.file.".config/gtk-4.0/assets" = {
+  #  recursive = true;
+  #  source = "${pkgs.catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/assets";
+  #};
   home.sessionVariables = {
     # I'm setting these environment variables for hyprcursor to use
-    XCURSOR_THEME = "${catppuccin_cursor_name}";
+    XCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
     XCURSOR_SIZE  = 64;
-    HYPRCURSOR_THEME = "${catppuccin_cursor_name}";
+    HYPRCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
     HYPRCURSOR_SIZE = 64;
     
     # pretty 
