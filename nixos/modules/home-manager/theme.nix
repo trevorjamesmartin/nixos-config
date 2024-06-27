@@ -72,7 +72,7 @@ in
   # qt settings
   qt = {
     enable = true;
-    platformTheme.name = "qt5ct";
+    platformTheme.name = "kvantum";
     style = {
       package = pkgs.catppuccin-kvantum;
       name = "kvantum";
