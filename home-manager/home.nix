@@ -1,11 +1,30 @@
-{ config, pkgs, ... }:
+{ config, inputs, pkgs, ... }:
 
 {
+  wayland.windowManager.hyprland = {
+    enable = true;
+    plugins = [
+      pkgs.hyprlandPlugins.borders-plus-plus
+      pkgs.hyprlandPlugins.hy3
+      pkgs.hyprlandPlugins.hyprbars
+      pkgs.hyprlandPlugins.hyprexpo
+      pkgs.hyprlandPlugins.hyprtrails
+      pkgs.hyprlandPlugins.hyprwinwrap
+    ];
+  
+    # NOTE: the following should work if you nixlang your hyprland config
+      #    extraConfig = ''
+      #      plugin = ${pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so
+      #      plugin = ${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so
+      #    '';
+
+  };
 
   imports = [
     /etc/nixos/modules/home-manager/theme.nix
     /etc/nixos/modules/home-manager/my-neovim.nix
   ];
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "tm";
@@ -38,6 +57,10 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    
+    hyprlandPlugins.hyprbars
+    hyprlandPlugins.hyprexpo
+    
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.lightly
     qt6Packages.qt6ct
@@ -158,6 +181,15 @@
     };
 
     ".config/libinput-gestures.conf".source = /etc/nixos/dotfiles/libinput-gestures.conf;
+
+
+    # LINKED hyprlandPlugins  - uncomment to use (*see /etc/nixos/dotfiles/hypr/hyprPlugins.sh*)
+    ".local/lib/hyprPlugins/libhyprexpo.so".source = "${pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so";
+    ".local/lib/hyprPlugins/libhyprbars.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so";
+    #".local/lib/hyprPlugins/libhy3.so".source = "${pkgs.hyprlandPlugins.hy3}/lib/libhy3.so";
+    #".local/lib/hyprPlugins/libborders-plus-plus.so".source = "${pkgs.hyprlandPlugins.borders-plus-plus}/lib/libborders-plus-plus.so";
+    ".local/lib/hyprPlugins/libhyprtrails.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprtrails.so";
+    #".local/lib/hyprPlugins/libhyprwinwrap.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libwinwrap.so";
   
   };
 

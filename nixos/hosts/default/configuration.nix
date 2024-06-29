@@ -240,6 +240,13 @@ in
         scripts = [ self.mpvScripts.mpris self.mpvScripts.uosc ];
       };
     })
+
+
+#    (self: super: {
+#      hyprland = super.hyprland.override {
+#        plugins = [ self.hyprlandPlugins.hyprexpo self.hyprlandPlugins.hyprbars ];
+#      };
+#    })
   ];
 
   # List packages installed in system profile. To search, run:
@@ -357,13 +364,18 @@ in
     dpkg
 
     # wayland / hyprland
+    wayland-protocols
+    wayland-scanner
+    hyprwayland-scanner
+
+
      
     dunst
 
     hyprcursor
     hyprpaper
     hyprlock
-
+    
     libinput
     libinput-gestures
     wmctrl

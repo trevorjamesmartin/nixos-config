@@ -8,6 +8,8 @@
 
 - requires those dotfiles & theme module
 
+![](./swappy-20240628_201138.png)
+
 ![](./swappy-20240627_003034.png)
 
 ![](./swappy-20240627_014426.png)
