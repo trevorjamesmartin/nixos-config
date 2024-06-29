@@ -10,6 +10,8 @@
 
 ![](./swappy-20240628_201138.png)
 
-![](./swappy-20240627_003034.png)
+![](/home/tm/nixos-laptop-config/swappy-20240628_230625.png)
 
+
+![](./swappy-20240627_003034.png)
 
