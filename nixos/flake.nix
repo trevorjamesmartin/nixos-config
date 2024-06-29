@@ -11,10 +11,10 @@
     catppuccin.url = "github:catppuccin/nix";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
+  hyprland-plugins = {
+    url = "github:hyprwm/hyprland-plugins";
+    inputs.hyprland.follows = "hyprland";
+  };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -23,17 +23,17 @@
 
   };
 
-  outputs = {
+  outputs = inputs @ {
       self,
       nixos-hardware, 
       nixpkgs,
       nixpkgs-unstable,
       nixpkgs-stable,
-      hyprland, hyprland-plugins,
+      hyprland,
       home-manager,
       catppuccin,
       ...
-    }@inputs: let
+  }:let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in
@@ -73,6 +73,8 @@
       };
     
       nixosConfigurations = {
+        home-manager.extraSpecialArgs = { inherit inputs; };
+
         default = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
 

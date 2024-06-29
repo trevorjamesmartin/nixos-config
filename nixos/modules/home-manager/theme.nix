@@ -95,7 +95,7 @@ in
     XCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
     XCURSOR_SIZE  = 64;
     HYPRCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
-    HYPRCURSOR_SIZE = 64;
+    #HYPRCURSOR_SIZE = 64;
     
     # pretty 
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
