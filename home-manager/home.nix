@@ -1,28 +1,9 @@
 { config, inputs, pkgs, ... }:
-
 {
-  wayland.windowManager.hyprland = {
-    enable = true;
-    plugins = [
-      pkgs.hyprlandPlugins.borders-plus-plus
-      pkgs.hyprlandPlugins.hy3
-      pkgs.hyprlandPlugins.hyprbars
-      pkgs.hyprlandPlugins.hyprexpo
-      pkgs.hyprlandPlugins.hyprtrails
-      pkgs.hyprlandPlugins.hyprwinwrap
-    ];
-  
-    # NOTE: the following should work if you nixlang your hyprland config
-      #    extraConfig = ''
-      #      plugin = ${pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so
-      #      plugin = ${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so
-      #    '';
-
-  };
-
   imports = [
     /etc/nixos/modules/home-manager/theme.nix
     /etc/nixos/modules/home-manager/my-neovim.nix
+    /etc/nixos/modules/home-manager/hyprland.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -57,9 +38,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    
-    hyprlandPlugins.hyprbars
-    hyprlandPlugins.hyprexpo
     
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.lightly
@@ -127,12 +105,6 @@
     plex-mpv-shim
     spotify
 
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
 
     (pkgs.writeShellScriptBin "${config.home.username}-local-update" ''
       echo "Hello, ${config.home.username}! (ready to update & run home-manager switch...)"
@@ -146,51 +118,13 @@
       sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace -j 4
     '')
 
-    (pkgs.writeShellScriptBin "graceful-logout" ''
-      #!/bin/sh
 
-      HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
-      hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
-      hyprctl dispatch exit
-    '')
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
     ".config/kitty/kitty.conf".source = /etc/nixos/dotfiles/kitty/kitty.conf;
-
-    ".config/hypr" = {
-      source = /etc/nixos/dotfiles/hypr;
-      recursive = true;
-    };
-
-    ".config/waybar" = {
-      source = /etc/nixos/dotfiles/waybar;
-      recursive = true;
-    };
-
-    ".config/libinput-gestures.conf".source = /etc/nixos/dotfiles/libinput-gestures.conf;
-
-
-    # LINKED hyprlandPlugins  - uncomment to use (*see /etc/nixos/dotfiles/hypr/hyprPlugins.sh*)
-    ".local/lib/hyprPlugins/libhyprexpo.so".source = "${pkgs.hyprlandPlugins.hyprexpo}/lib/libhyprexpo.so";
-    ".local/lib/hyprPlugins/libhyprbars.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprbars.so";
-    #".local/lib/hyprPlugins/libhy3.so".source = "${pkgs.hyprlandPlugins.hy3}/lib/libhy3.so";
-    #".local/lib/hyprPlugins/libborders-plus-plus.so".source = "${pkgs.hyprlandPlugins.borders-plus-plus}/lib/libborders-plus-plus.so";
-    ".local/lib/hyprPlugins/libhyprtrails.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libhyprtrails.so";
-    #".local/lib/hyprPlugins/libhyprwinwrap.so".source = "${pkgs.hyprlandPlugins.hyprbars}/lib/libwinwrap.so";
-  
   };
 
   # Home Manager can also manage your environment variables through
@@ -210,11 +144,10 @@
   #  /etc/profiles/per-user/tm/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
     EDITOR = "nvim";
     TERM = "kitty";
     TERMINAL = "kitty";
-    DOTFILES = "/etc/nixos/dotfiles";
+    #DOTFILES = "/etc/nixos/dotfiles";
   };
 
   programs.tmux = {
@@ -243,3 +176,4 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
+
