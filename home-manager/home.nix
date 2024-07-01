@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }:
+{ config, lib, inputs, pkgs, ... }:
 {
   imports = [
     /etc/nixos/modules/home-manager/theme.nix
@@ -38,7 +38,12 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    
+     (pkgs.writeShellScriptBin "graceful-logout" ''
+     #!/bin/sh
+     HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
+     hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
+     hyprctl dispatch exit
+     '')   
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.lightly
     qt6Packages.qt6ct
@@ -63,7 +68,11 @@
     # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
     nerdfonts
     font-awesome
-    # bibata-cursors
+    
+    catppuccin
+    bibata-cursors
+    catppuccin-cursors
+
     xclip
     xdotool
     htop
@@ -87,6 +96,8 @@
     # photo editor
     gimp
 
+    # emoji picker
+    smile
     # chat
 
     discord
@@ -98,7 +109,8 @@
 
     # Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.
     nwg-look 
-
+    nwg-drawer
+    nwg-dock-hyprland
     # irc
     quassel
 
