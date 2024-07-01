@@ -1,8 +1,16 @@
-{ inputs, pkgs, ... }:
+{ config, lib, inputs, pkgs, ... }:
+let
+  rice = config.rice;
+in
 {
   home.packages = [
-      pkgs.hyprlandPlugins.hyprbars
-      pkgs.hyprlandPlugins.hyprexpo
+
+      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
+      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      
+      pkgs.wl-screenrec
+
+      pkgs.hyprpicker
 
       (pkgs.writeShellScriptBin "graceful-logout" ''
       #!/bin/sh
@@ -14,7 +22,7 @@
 
   wayland.windowManager.hyprland = {
     enable = true;
-    xwayland.enable = true;
+    # xwayland.enable = true;
     systemd.enable = true;
 
     plugins = [
@@ -40,9 +48,9 @@
         "DP-2,2560x1440@60,2560x0,1"
       ];
 
-      xwayland = {
-        force_zero_scaling = true;
-      };
+      #xwayland = {
+        # force_zero_scaling = true;
+      #};
 
       workspace = [
         # left = odd, right = even
@@ -61,6 +69,7 @@
       exec-once = [
         "/etc/nixos/dotfiles/hypr/scripts/start.sh"
         "hypridle"
+        "nwg-dock-hyprland -d -f -w 20"
       ];
 
       exec = [
@@ -80,7 +89,8 @@
       "$terminal" = "kitty";
       "$fileManager" = "thunar";
       "$browser" = "brave";
-      "$menu" = "rofi -show drun -show-icons";
+      "$menu" = "nwg-drawer";
+      #"$menu" = "rofi -show drun -show-icons";
 
       input = {
         follow_mouse = 1;
@@ -185,35 +195,57 @@
           bar_button_padding = 12;
           bar_padding = 10;
           bar_part_of_window = true;
-          bar_precedence_over_border = true;
+          
+          #bar_precedence_over_border = true; # flicker problem 
+          
           "hyprbars-button" = [
             # color, size, icon, command
-           #"rgb(e78284), 16, , hyprctl dispatch killactive"
-           #"rgb(e5c890), 16, , hyprctl dispatch fullscreen 2"
-           #"rgb(a6d189), 16, , hyprctl dispatch togglefloating"
- 
-            "0, 18, , hyprctl dispatch killactive"
-            "0, 18, , hyprctl dispatch fullscreen 2"
-            "0, 18, , hyprctl dispatch togglefloating"
+            "rgb(e78284), 16, , hyprctl dispatch killactive"
+            "rgb(e5c890), 16, , hyprctl dispatch fullscreen 1"
+            "rgb(a6d189), 16, , hyprctl dispatch togglefloating"
+            #"0, 18, , hyprctl dispatch killactive"
+            #"0, 18, , hyprctl dispatch fullscreen 2"
+            #"0, 18, , hyprctl dispatch togglefloating"
           ];
 
         };
 
       };
 
+      windowrule = [
+        "animation popin,^(smile)$" # sets the animation style for kitty"
+      ];
+
 
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
       windowrulev2 = [
         "suppressevent maximize, class:.*" # You'll probably like this.
-        "stayfocused,class:(Rofi)"
-        "forceinput,class:(Rofi)"
+
+        "stayfocused,class:(Rofi)"  # menu
+        "forceinput,class:(Rofi)"   #
+
+        "float,class:(smile)"       # 
+        "stayfocused,class:(smile)" # emoji picker
+        "forceinput,class:(smile)"  #
+
+        # "rounding 10,class:(smile)" # emoji picker
       ];
 
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
       
       "$mainMod" = "SUPER";
 
-      bind = [    
+      bind = [
+
+        # launcher
+        "$mainMod, ESC, exec, nwg-drawer"       
+
+        # emoji picker 🤣
+        "$mainMod SHIFT, Equal, exec, smile"
+
+        # color picker
+        "$mainMod SHIFT, Minus, exec, hyprpicker -a"
+        
         # overview
         "$mainMod, Tab, hyprexpo:expo, toggle"
         # lock screen
