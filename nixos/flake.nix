@@ -3,22 +3,22 @@
   
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/24.05";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    #nixpkgs.url = "github:nixos/nixpkgs/24.05";
+    #nixpkgs-stable.url = "github:nixos/nixpkgs/24.05";
+    #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     
     catppuccin.url = "github:catppuccin/nix";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-  hyprland-plugins = {
-    url = "github:hyprwm/hyprland-plugins";
-    inputs.hyprland.follows = "hyprland";
-  };
+    
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
   };
@@ -27,8 +27,8 @@
       self,
       nixos-hardware, 
       nixpkgs,
-      nixpkgs-unstable,
-      nixpkgs-stable,
+      #nixpkgs-unstable,
+      #nixpkgs-stable,
       hyprland,
       home-manager,
       catppuccin,
