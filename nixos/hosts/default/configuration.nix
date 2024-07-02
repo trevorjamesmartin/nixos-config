@@ -251,8 +251,25 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+
     waybar
+    # display media information in waybar
     waybar-mpris
+
+    # wayland screen recorder
+    wl-screenrec
+
+    # wayland colorpicker
+    hyprpicker
+
+    # close all windows and exit hyprland
+    (pkgs.writeShellScriptBin "graceful-logout" ''
+    #!/bin/sh
+    HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
+    hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
+    hyprctl dispatch exit
+    '')
+
     # media
     mpv
 

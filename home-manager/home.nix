@@ -51,7 +51,7 @@
     qt5.qtwayland
 
     # QT (KDE/Plasma) File manager 
-    dolphin
+    #dolphin
 
     # IRC client
     halloy
@@ -65,7 +65,7 @@
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+    #(pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
     nerdfonts
     font-awesome
     
@@ -185,6 +185,7 @@
     '';
   };
 
+  fonts.fontconfig.enable = true; # required to autoload fonts from packages
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }

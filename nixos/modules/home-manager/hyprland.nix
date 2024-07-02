@@ -1,28 +1,8 @@
 { config, lib, inputs, pkgs, ... }:
-let
-  rice = config.rice;
-in
 {
-  home.packages = [
-
-      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      
-      pkgs.wl-screenrec
-
-      pkgs.hyprpicker
-
-      (pkgs.writeShellScriptBin "graceful-logout" ''
-      #!/bin/sh
-      HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
-      hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
-      hyprctl dispatch exit
-      '')
-  ];
-
   wayland.windowManager.hyprland = {
     enable = true;
-    # xwayland.enable = true;
+    xwayland.enable = true;
     systemd.enable = true;
 
     plugins = [
@@ -42,17 +22,19 @@ in
     settings = {
       
       monitor = [
-        ",highres,auto,1"
+        "eDP-1,1920x1080@60,0x0,1.2"
         # position desktop monitors (when plugged in)
         "HDMI-A-1,2560x1440@60,0x0,1"
         "DP-2,2560x1440@60,2560x0,1"
       ];
 
-      #xwayland = {
-        # force_zero_scaling = true;
-      #};
+      xwayland = {
+         force_zero_scaling = true;
+      };
 
       workspace = [
+        "special:special, on-created-empty:kitty"
+
         # left = odd, right = even
         "1, monitor:HDMI-A-1" 
         "2, monitor:DP-2"
@@ -108,8 +90,8 @@ in
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
-        gaps_in = 5;
-        gaps_out = 5;
+        gaps_in = 1;
+        gaps_out = 0;
         border_size = 2;
         "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
         "col.inactive_border" = "rgba(595959aa)";
@@ -156,8 +138,6 @@ in
 
       master = {
           # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-          #new_is_master = true
-          #new_status = "inherit";
           no_gaps_when_only = 1;
       };
 
@@ -187,12 +167,12 @@ in
         };
 
         hyprbars = {
-          bar_height = 28;
+          bar_height = 24;
           bar_color = "rgb(48, 52, 70)";
           "col.text" = "rgb(c6d0f5)";
           bar_text_size = 11;
           bar_text_font = "Jetbrains Mono Nerd Font Mono Bold";
-          bar_button_padding = 12;
+          bar_button_padding = 8;
           bar_padding = 10;
           bar_part_of_window = true;
           
@@ -200,9 +180,9 @@ in
           
           "hyprbars-button" = [
             # color, size, icon, command
-            "rgb(e78284), 16, , hyprctl dispatch killactive"
-            "rgb(e5c890), 16, , hyprctl dispatch fullscreen 1"
-            "rgb(a6d189), 16, , hyprctl dispatch togglefloating"
+            "rgb(e78284), 14, , hyprctl dispatch killactive"
+            "rgb(e5c890), 14, , hyprctl dispatch fullscreen 1"
+            "rgb(a6d189), 14, , hyprctl dispatch togglefloating"
             #"0, 18, , hyprctl dispatch killactive"
             #"0, 18, , hyprctl dispatch fullscreen 2"
             #"0, 18, , hyprctl dispatch togglefloating"
@@ -219,6 +199,9 @@ in
 
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
       windowrulev2 = [
+        "tag +music, initialTitle:(Spotify)"    # add dynamic tag `music*` to spotify window
+        "tag +music, initialTitle:(Spotify Premium)"    # add dynamic tag `music*` to spotify window
+
         "suppressevent maximize, class:.*" # You'll probably like this.
 
         "stayfocused,class:(Rofi)"  # menu
@@ -236,7 +219,8 @@ in
       "$mainMod" = "SUPER";
 
       bind = [
-
+        "$mainMod, C, movetoworkspace, special"
+        "$mainMod, code:49, togglespecialworkspace"
         # launcher
         "$mainMod, ESC, exec, nwg-drawer"       
 
@@ -253,11 +237,18 @@ in
         # brightness control
         ",XF86MonBrightnessUp, exec, brightnessctl set +5%"
         ",XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+
+        # media keys
+        ",XF86AudioPrev, exec, playerctl previous"
+        ",XF86AudioStop, exec, playerctl stop"
+        ",XF86AudioPlay, exec, playerctl play-pause"
+        ",XF86AudioNext, exec, playerctl next"
         
         # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
 
         "$mainMod, Return, exec, $terminal"
-        "$mainMod, Q, killactive,"
+        "$mainMod, Q, killactive"
+        #"$mainMod, Q, exec, close-active-window"
         "$mainMod, M, exit,"
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"

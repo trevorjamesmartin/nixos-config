@@ -4,15 +4,16 @@
     "layer": "top",
     "position": "top",
     "height": 30,
-    "margin-left": 5,
-    "margin-right": 5,
-    "margin-top": 5,
-    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "margin-top": 0,
+    "margin-bottom": 2,
     "spacing": 1,
     "modules-left": [
         "custom/power",
         "custom/separator",
-        "hyprland/workspaces"
+        "hyprland/workspaces",
+        "custom/waybar-mpris"
     ],
     "modules-center": [
         "clock"
@@ -181,6 +182,28 @@
         },
         "on-click": "pavucontrol"
     },
+    "custom/waybar-mpris": {
+        "return-type": "json",
+        "exec": "waybar-mpris --position --autofocus", //|sed 's///g'",
+        "on-click": "waybar-mpris --send toggle",
+        // This option will switch between players on right click.
+        "on-click-right": "waybar-mpris --send player-next",
+        // The options below will switch the selected player on scroll
+            // "on-scroll-up": "waybar-mpris --send player-next",
+            // "on-scroll-down": "waybar-mpris --send player-prev",
+        // The options below will go to next/previous track on scroll
+            // "on-scroll-up": "waybar-mpris --send next",
+            // "on-scroll-down": "waybar-mpris --send prev",
+        "escape": true,
+    },
+ // "custom/media": {
+ //     "interval": 1,
+ //     "return-type": "json",
+ //     "exec": "waybar-mpris",
+ //     "exec-if": "pgrep spotify",
+ //     "on-click":"playerctl --player=spotify play-pause",
+ //     "escape": true
+ // },
     "custom/power": {
         "format": "{icon}",
         "format-icons": " ",
