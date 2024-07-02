@@ -233,17 +233,26 @@
   #};
 
   nixpkgs.overlays = [
+
+    # allow mpv to be controlled by playerctl
     (self: super: {
       mpv = super.mpv.override {
         scripts = [ self.mpvScripts.mpris self.mpvScripts.uosc ];
       };
     })
-
+    # change the 'PAUSE' icon to something in my font set
+    (self: super: {
+      waybar-mpris = super.waybar-mpris.overrideAttrs (oldAttrs: {
+        patches = [ ../../patches/waybar-mpris.patch ];
+      });
+    })
   ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    waybar
+    waybar-mpris
     # media
     mpv
 
@@ -256,14 +265,16 @@
     # development
     git
     gnumake
-    gcc
-    clang
+    gcc    clang
     cmake
     pkg-config
     meson
     cpio
     ninja
+
     python3
+    playerctl
+
     nodejs_18
     pandoc
 
@@ -390,7 +401,6 @@
     swww
     rofi-wayland
     
-    waybar
     pavucontrol
     power-profiles-daemon
     rofi-power-menu
@@ -524,9 +534,21 @@
 
   fonts = {
 
-    packages = with pkgs; [ 
-      fira-code 
-      gyre-fonts 
+    packages = with pkgs; [
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
+      liberation_ttf
+      fira-code
+      fira-code-symbols
+      mplus-outline-fonts.githubRelease
+      dina-font
+      proggyfonts
+      gyre-fonts
+      font-awesome
+      powerline-fonts
+      powerline-symbols
+      (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
     ];
     fontconfig = {
       localConf = ''

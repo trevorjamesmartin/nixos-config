@@ -1,0 +1,13 @@
+diff --git a/main.go b/main.go
+index 206ea44..1e819be 100644
+--- a/main.go
++++ b/main.go
+@@ -29,7 +29,7 @@ const (
+ // Mostly default values for flag options.
+ var (
+ 	PLAY      = "▶"
+-	PAUSE     = ""
++	PAUSE     = "⏸"
+ 	SEP       = " - "
+ 	ORDER     = "SYMBOL:ARTIST:ALBUM:TITLE:POSITION"
+ 	AUTOFOCUS = false
