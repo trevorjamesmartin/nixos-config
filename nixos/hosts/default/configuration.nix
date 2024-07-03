@@ -435,6 +435,8 @@
     oculante
 
     vlc
+
+
   ];
 
   programs.thunar.plugins = with pkgs.xfce; [
@@ -500,9 +502,10 @@
     polkitPolicyOwners = [ "tm" ];
   };
 
-  programs.ssh.askPassword = "";
-
-
+  programs.ssh.enableAskPassword = true;
+  #programs.ssh.askPassword = "${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass";
+  programs.ssh.askPassword = "${pkgs.ssh-askpass-fullscreen}/bin/ssh-askpass-fullscreen";
+  
   programs.zsh.enable = true;
 
   programs.zsh.shellAliases = {
