@@ -500,6 +500,8 @@
     polkitPolicyOwners = [ "tm" ];
   };
 
+  programs.ssh.askPassword = "";
+
 
   programs.zsh.enable = true;
 
