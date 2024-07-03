@@ -11,7 +11,8 @@ in
     portal = {
       enable = true;
       extraPortals = with pkgs; [
-#       xdg-desktop-portal-gtk
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-kde
       ];
     };
   };
@@ -34,12 +35,6 @@ in
       mode = "444";
     };
 
-   # "xdg/gtk-3.0".source = "${pkgs.catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-3.0";
-
-
-    
-
-
     # qt 4/5 global theme
     "xdg/Trolltech.conf" = {
       text = ''
@@ -51,11 +46,6 @@ in
 
     # TODO: system theme 
 
-    #"xdg/gtk-4.0/gtk-dark.css".source = "${catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/gtk-dark.css";
-
-    #"xdg/gtk-4.0/assets".source = "${catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/assets";
-    #"xdg/gtk-2.0".source =  ./gtk-2.0;
-    #"xdg/gtk-3.0".source =  ./gtk-3.0;
     "xdg/user-dirs.defaults" = {
       text = ''
         DESKTOP=Desktop

@@ -3,8 +3,7 @@
   
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    #nixpkgs-stable.url = "github:nixos/nixpkgs/24.05";
-    #nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "github:nixos/nixpkgs/24.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     
     catppuccin.url = "github:catppuccin/nix";
@@ -27,71 +26,32 @@
       self,
       nixos-hardware, 
       nixpkgs,
-      #nixpkgs-unstable,
-      #nixpkgs-stable,
       hyprland,
       home-manager,
       catppuccin,
       ...
-  }:let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      nixosModules = {
-      # ...
-        gnome = { pkgs, ... }: {
-          config = {
-            #services.xserver.enable = false;
-            #services.xserver.displayManager.gdm.enable = false;
-            services.xserver.desktopManager.gnome.enable = true;
-            environment.gnome.excludePackages = (with pkgs; [
-              gnome-photos
-              gnome-tour
-            ]) ++ (with pkgs.gnome; [
-              seahorse # gnome key ring management
-              cheese # webcam tool
-              gnome-music
-              # gedit # text editor
-              epiphany # web browser
-              geary # email reader
-              gnome-characters
-              tali # poker game
-              iagno # go game
-              hitori # sudoku game
-              atomix # puzzle game
-              yelp # Help view
-              gnome-contacts
-              gnome-initial-setup
-            ]);
-            
-            programs.dconf.enable = true;
-            
-            environment.systemPackages = with pkgs; [ gnome.gnome-tweaks ];
-          }; # config
-        }; #gnome
+  }:
+  let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
+  in
+  {
+    nixosConfigurations = {
+      home-manager.extraSpecialArgs = { inherit inputs; };
+
+      default = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+
+        modules = with self.nixosModules; [ 
+
+          nixos-hardware.nixosModules.lenovo-thinkpad-t14s
+          
+          catppuccin.nixosModules.catppuccin
+          ./hosts/default/configuration.nix
+
+          inputs.home-manager.nixosModules.home-manager
+        ];
       };
-    
-      nixosConfigurations = {
-        home-manager.extraSpecialArgs = { inherit inputs; };
-
-        default = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-
-          modules = with self.nixosModules; [ 
-
-            nixos-hardware.nixosModules.lenovo-thinkpad-t14s
-            
-            catppuccin.nixosModules.catppuccin
-            ./hosts/default/configuration.nix
-
-            inputs.home-manager.nixosModules.default
-            #inputs.home-manager.nixosModules.home-manager
-	  
-	  ];
-        };
-
-      };
-
     };
+  };
 }
