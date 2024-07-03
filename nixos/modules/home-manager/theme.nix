@@ -1,5 +1,5 @@
 # theme.nix
-{ pkgs, ...}:
+{ lib, pkgs, ...}:
 let
   # edit catppuccin here
   catppuccin_flavor = "frappe";
@@ -85,6 +85,12 @@ in
       name = "kvantum";
     };
   };
+
+  dconf.settings = with lib.gvariant; {
+    # to remove titlebar buttons from Gnome apps:
+    # gsettings set org.gnome.desktop.wm.preferences on-layout ''
+    "org/gnome/desktop/wm/preferences.button-layout".value = "";
+  };  
 
   # Generate kvantum 
   xdg.configFile."Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini {}).generate "kvantum.kvconfig" {
