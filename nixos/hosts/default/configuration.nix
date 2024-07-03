@@ -9,8 +9,9 @@
       ./hardware-configuration.nix
       ./xdg.nix
       ../../cachix.nix
-
-      ../../modules/nixos/gdm-theme.nix
+      
+      #../../modules/nixos/global-theme.nix
+      # ../../modules/nixos/gdm-theme.nix
     ];
   
   # enale opengl options that help with gaming
@@ -87,19 +88,35 @@
       exportConfiguration=true;
   };
 
+  services.greetd = {
+    enable = true;
+    settings = rec {
+      initial_session = {
+        #command = "${pkgs.sway}/bin/sway";
+        command = "dbus-run-session ${pkgs.hyprland}/bin/Hyprland";
+        user = "tm";
+      };
+      default_session = initial_session;
+    };
+  };
 
   services.xserver = {
     
     # Enable the GNOME Desktop Environment.
     displayManager = {
       gdm = {
-        enable = true;
+        enable = false;
       };
+
+      lightdm = {
+        enable = false;
+      };
+
     };
 
     desktopManager = {
       gnome = {
-        enable = true;
+        enable = false;
       };
     };
 
@@ -128,17 +145,6 @@
   services.hypridle.enable = true;
 
 
-# # Enable KDE Plasma
-# services.displayManager.sddm = {
-#     enable = true;
-#     wayland.enable = true;
-#     theme = "${pkgs.catppuccin-sddm-corners}/share/sddm/themes/catppuccin-sddm-corners"; # Not including `Main.qml`, since SDDM does this automagically
-#     extraPackages = [
-#       pkgs.libsForQt5.qt5.qtgraphicaleffects
-#       pkgs.libsForQt5.qt5.qtsvg
-#     ];
-# };
-
   services.xserver.displayManager.setupCommands = ''
       displays=$(wlr-randr --json |jq length);
       if [[ $displays -gt 1 ]] then
@@ -148,10 +154,6 @@
       echo "SETUP COMMANDS" >> /tmp/hyprexitwithgrace.log
   '';
 
-  #services.displayManager.sddm.wayland.enable = true;
-  #services.desktopManager.plasma6.enable = true; 
-  #services.desktopManager.plasma6.enable = true; 
-  
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
 
@@ -251,7 +253,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-
+    gsettings-desktop-schemas
+    gsettings-qt
     waybar
     # display media information in waybar
     waybar-mpris
@@ -509,8 +512,6 @@
     neofetch = "fastfetch -c neofetch";
   };
 
-
-
  # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -523,31 +524,22 @@
     defaultEditor = true;
   };
 
-#  security.doas.enable = true;
   security.sudo.enable = true;
-# security.doas.extraRules = [{
-#   users = ["tm"];
-#   # Optional, retains environment variables while running commands 
-#   # e.g. retains your NIX_PATH when applying your config
-#   keepEnv = true; 
-#   persist = true;  # Optional, only require password verification a single time
-# }];
-  
-
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-console
-    xterm
-  ];
-  
-  #environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    # plasma-browser-integration
-    # konsole
-    # oxygen
-  #]; 
 
   programs.sway.enable = true;
 
-  programs.dconf.enable = true;
+  programs.dconf = {
+    enable = true;
+    profiles = {
+      user.databases = [{
+        settings = with lib.gvariant; {
+          # to remove titlebar buttons from Gnome apps:
+          "org/gnome/desktop/wm/preferences.button-layout".value = "";
+          "org/gnome/desktop/interface.cursor-size".value = mkInt32 64;
+        };
+      }];
+    };
+  };
 
   fonts = {
 
