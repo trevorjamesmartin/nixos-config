@@ -49,6 +49,7 @@
       ];
 
       exec-once = [
+        "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "/etc/nixos/dotfiles/hypr/scripts/start.sh"
         "hypridle"
         "nwg-dock-hyprland -d -f -w 20"

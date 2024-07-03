@@ -191,6 +191,11 @@
     enable = false;
     openFirewall = false;
   };
+  environment.variables.XDG_RUNTIME_DIR = "/run/user/$UID"; # set the runtime directory
+
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.kwallet.enableKwallet = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tm = {
@@ -253,8 +258,11 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    gnome.gnome-keyring
     gsettings-desktop-schemas
     gsettings-qt
+    libsForQt5.polkit-kde-agent
+    
     waybar
     # display media information in waybar
     waybar-mpris
@@ -450,7 +458,7 @@
  
 
   environment.sessionVariables = {
-    XDG_RUNTIME_DIR = "/run/user/$(id -u)";
+    #XDG_RUNTIME_DIR = "/run/user/$(id -u)";
     STEAM_EXTRA_COMPAT_TOOLS_PATH =
       "/home/tm/.steam/root/compatibilitytools.d";
 
