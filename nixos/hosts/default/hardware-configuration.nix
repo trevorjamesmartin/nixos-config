@@ -15,8 +15,10 @@
     # Plymouth
     consoleLogLevel = 0;
     initrd.verbose = false;
-    plymouth.enable = true;
-    kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=3" "udev.log_priority=3" "boot.shell_on_fail" ];
+    
+    #kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=3" "udev.log_priority=3" "boot.shell_on_fail" ];
+    
+    kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
     
     # enable systemd
     initrd.systemd.enable = true;

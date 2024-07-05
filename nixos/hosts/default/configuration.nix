@@ -21,7 +21,7 @@
   };
   # Catppuccin Theme
   qt.platformTheme = "qt5ct";
-  catppuccin.enable = true;
+  #catppuccin.enable = true;
 
   services.fwupd.enable = true;
 
@@ -34,7 +34,14 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  
+  boot.plymouth = {
+    enable = true;
+    theme = lib.mkForce "owl";
+    themePackages = [
+      pkgs.plymouth-matrix-theme
+      pkgs.adi1090x-plymouth-themes
+    ];
+  };
   boot.loader.grub.fontSize = "128";
 
   networking.hostName = "thinkpadt14s"; # Define your hostname.
@@ -66,34 +73,15 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-  services.xserver={
-      enable=true;
-      xrandrHeads=[
-        {
-          output = "eDP-1";
-          monitorConfig = ''Option "Enable" "false"'';
-          #primary = true;
-        }
-        {
-          output = "HDMI-A-1";
-          monitorConfig = ''Option "Enable" "true"'';
-   
-        }
-        {
-          output = "DP-2";
-          monitorConfig = ''Option "Enable" "true"'';
-          #primary = true;
-        }
-      ];
-      exportConfiguration=true;
-  };
+  
+  services.xserver.enable=true;
 
   services.greetd = {
     enable = true;
     settings = rec {
       initial_session = {
         #command = "${pkgs.sway}/bin/sway";
-        command = "dbus-run-session ${pkgs.hyprland}/bin/Hyprland";
+        command = "dbus-run-session $(${pkgs.hyprland}/bin/Hyprland >/dev/null 2>&1) >/dev/null 2>&1";
         user = "tm";
       };
       default_session = initial_session;
@@ -145,14 +133,14 @@
   services.hypridle.enable = true;
 
 
-  services.xserver.displayManager.setupCommands = ''
-      displays=$(wlr-randr --json |jq length);
-      if [[ $displays -gt 1 ]] then
-        primary=$(wlr-randr --json |jq -r '.[0]| .name');
-        wlr-randr --output $primary --off;
-      fi
-      echo "SETUP COMMANDS" >> /tmp/hyprexitwithgrace.log
-  '';
+# services.xserver.displayManager.setupCommands = ''
+#     displays=$(wlr-randr --json |jq length);
+#     if [[ $displays -gt 1 ]] then
+#       primary=$(wlr-randr --json |jq -r '.[0]| .name');
+#       wlr-randr --output $primary --off;
+#     fi
+#     echo "SETUP COMMANDS" >> /tmp/hyprexitwithgrace.log
+# '';
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
@@ -194,7 +182,7 @@
   environment.variables.XDG_RUNTIME_DIR = "/run/user/$UID"; # set the runtime directory
 
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.kwallet.enableKwallet = true;
+  # security.pam.services.kwallet.enableKwallet = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -204,11 +192,12 @@
     shell = pkgs.zsh;
     extraGroups = [ "docker" "libvirtd" "networkmanager" "wheel" "input" ];
     packages = with pkgs; [
+      pulseaudio
       firefox
       neovim
       chromium
       brave
-
+      
     ];
 
 
@@ -258,7 +247,10 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    gnome.gnome-keyring
+    greetd.greetd
+
+    plymouth-matrix-theme
+    gnome-keyring
     gsettings-desktop-schemas
     gsettings-qt
     libsForQt5.polkit-kde-agent
@@ -307,6 +299,7 @@
     pandoc
 
     glib.dev
+    glfw
     
     catppuccin
     catppuccin-gtk
@@ -434,6 +427,7 @@
     rofi-power-menu
     rofi-bluetooth
     blueman
+    bluez-experimental
 
     wdisplays
     brightnessctl
@@ -518,7 +512,7 @@
 
   programs.zsh.shellAliases = {
     neofetch = "fastfetch -c neofetch";
-    TerminalEmulator = "kitty";
+    TerminalEmulator = "foot";
   };
 
   programs.bash.shellAliases = {
@@ -528,10 +522,11 @@
  # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -571,6 +566,9 @@
       powerline-fonts
       powerline-symbols
       (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      xkcd-font
+      udev-gothic-nf
+
     ];
     fontconfig = {
       localConf = ''
@@ -592,7 +590,7 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  #;Q networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
@@ -613,6 +611,8 @@
     #allowedUDPPorts = [ 1900 5353 32410 32412 32413 32414 ];
   };
 
+  users.groups.netdev.members = [ "nm-openconnect" ];
+
   services.avahi = {
     enable = true;
     nssmdns4 = true; # allow applications to resolve .local
@@ -622,7 +622,6 @@
         userServices = true;
         addresses = true;
     };
-            
   };
 
   # networking.enableIPv6 = false;
