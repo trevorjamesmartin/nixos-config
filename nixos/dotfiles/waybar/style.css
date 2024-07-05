@@ -1,6 +1,6 @@
 @define-color fg #f5f5f5;
-@define-color bg  rgba(0,0,0,0);
-/*@define-color bg #091F2D;*/
+/*@define-color bg  rgba(0,0,0,0);*/
+@define-color bg #091F2D;
 @define-color bordercolor #888CA7;
 @define-color disabled #a5a5a5;
 @define-color alert #f53c3c;
@@ -8,22 +8,21 @@
 
 * {
   min-height: 0;
-  font-family: "UbuntuSans Nerd Font,UbuntuSans NF:style=Bold", Helvetica, Roboto, Arial, fileicon, material, sans-serif; 
-  font-family: monospace;
-  font-size: 0.8rem;
+  font-family: "JetBrains Mono Nerd Font Mono bold", Helvetica, Roboto, Arial, fileicon, material, sans-serif; 
+  font-size: 0.9rem;
 }
 
 window#waybar {
   /*font-family: "JetBrains Mono NerdFont";*/
   background-color: @bg;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: @fg;
   transition-property: background-color;
   transition-duration: 0.5s;
 }
 
 window#waybar.empty {
-  opacity: 0.3;
+  opacity: 0.7;
 }
 
 button {

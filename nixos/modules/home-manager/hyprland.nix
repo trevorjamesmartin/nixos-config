@@ -33,7 +33,7 @@
       };
 
       workspace = [
-        "special:special, on-created-empty:kitty"
+        "special:special, on-created-empty:$terminal"
 
         # left = odd, right = even
         "1, monitor:HDMI-A-1" 
@@ -49,32 +49,36 @@
       ];
 
       exec-once = [
-        "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
-        "/etc/nixos/dotfiles/hypr/scripts/start.sh"
-        "hypridle"
-        "nwg-dock-hyprland -d -f -w 20"
-        "pidof hyprlock || hyprlock"
+        # load the essentials
+        "swww init &" # wallpaper agent
+        "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
+        "hyprlock" # lock screen
+        "hypridle" # power management
+        "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
+        "libinput-gestures &" # gesture support (swipe)
+        "dunst" # notifications
       ];
 
       exec = [
-        "/etc/nixos/dotfiles/hypr/scripts/start-waybar.sh"
-        # check if laptop is plugged in
+        # check the external monitor situation
         "/etc/nixos/dotfiles/hypr/scripts/external.sh"
-        # set the cursor size/theme
-        "gsettings set org.gnome.desktop.interface cursor-size $XCURSOR_SIZE"
-        "gsettings set org.gnome.desktop.interface cursor-theme $XCURSOR_THEME"
-        # TODO: read further on setting this automatically (via configuration.nix ?)
+        # reload home-manager session variables
         ". ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
-        # start conky
+        # waybar
+        "/etc/nixos/dotfiles/hypr/scripts/start-waybar.sh"
+        # conky
         "kill -9 $(pidof conky); sleep 1; conky"
+
+        # set the cursor theme
+        "sleep 1;hyprctl setcursor $XCURSOR_THEME $XCURSOR_SIZE"
       ];
 
       # Set programs that you use
-      "$terminal" = "kitty";
+      #"$terminal" = "kitty";
+      "$terminal" = "foot";
       "$fileManager" = "thunar";
       "$browser" = "brave";
-      "$menu" = "nwg-drawer";
-      #"$menu" = "rofi -show drun -show-icons";
+      "$menu" = "rofi -show drun -show-icons";
 
       input = {
         follow_mouse = 1;
@@ -150,7 +154,9 @@
 
       misc = {
           # See https://wiki.hyprland.org/Configuring/Variables/ for more
-          force_default_wallpaper = 0; # Set to 0 or 1 to disable the anime mascot wallpapers
+          # force_default_wallpaper = 0; # Set to 0 or 1 to disable the anime mascot wallpapers
+          disable_hyprland_logo = true;
+          disable_splash_rendering = true; # disable the anime mascot wallpapers
       };
 
 
@@ -195,12 +201,31 @@
       };
 
       windowrule = [
-        "animation popin,^(smile)$" # sets the animation style for kitty"
+        "center 1,^(*)$" # all floaters start centered
+        "animation popin,^(smile)$" 
+        "move 50% 50%,^(nm-applet)$"
+        "animation popin,^(nm-applet)$"
+        "move 100 100,^(pavucontrol)$"
+        "animation popin,^(pavucontrol)$"
+        "float,^(thunar)$"
+
+        "center,floating:1"
       ];
 
 
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
       windowrulev2 = [
+        "maxsize 1400 900,floating:1"
+
+        "opacity 1.0:override,fullscreen:(1)"
+
+        "opacity 0.9 override 0.9 override,class:^(.*)$"
+        
+        "opacity 1.0 override 1.0 override,title:^(.*YouTube.*)$"
+        "opacity 1.0:override,class:^(gimp)$"
+        "opacity 1.0:override,class:^(occulant)$"
+        "opacity 0.8:override,class:^(thunar)$"
+
         "tag +music, initialTitle:(Spotify)"    # add dynamic tag `music*` to spotify window
         "tag +music, initialTitle:(Spotify Premium)"    # add dynamic tag `music*` to spotify window
 
@@ -209,11 +234,16 @@
         "stayfocused,class:(Rofi)"  # menu
         "forceinput,class:(Rofi)"   #
 
+        "float,class:(pavucontrol)"
+        "float,class:(nm-applet)"
+
+
         "float,class:(smile)"       # 
         "stayfocused,class:(smile)" # emoji picker
         "forceinput,class:(smile)"  #
 
         # "rounding 10,class:(smile)" # emoji picker
+
       ];
 
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
@@ -224,7 +254,7 @@
         "$mainMod, C, movetoworkspace, special"
         "$mainMod, code:49, togglespecialworkspace"
         # launcher
-        "$mainMod, ESC, exec, nwg-drawer"       
+        #"$mainMod, ESC, exec, nwg-drawer"       
 
         # emoji picker 🤣
         "$mainMod SHIFT, Equal, exec, smile"
@@ -339,6 +369,8 @@
       recursive = true;
     };
 
+    ".config/foot/foot.ini".source = /etc/nixos/dotfiles/foot/foot.ini;
+
     # gestures
     ".config/libinput-gestures.conf".source = /etc/nixos/dotfiles/libinput-gestures.conf;
 
@@ -399,6 +431,7 @@
     # GENERAL
     general {
         no_fade_in = false
+        resize_on_border= true
     }
 
     input-field {

@@ -47,7 +47,7 @@ in
       set -g mouse on
 
       # Where this shows 'alacritty' - the value should be whatever $TERM is outside tmux
-      set-option -ga terminal-overrides ",alacritty:Tc"
+      set-option -ga terminal-overrides ",foot:Tc"
 
       # Catppuccin options
       set -g @catppuccin_host 'on'
