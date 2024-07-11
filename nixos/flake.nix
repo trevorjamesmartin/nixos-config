@@ -19,7 +19,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+  # conky = {
+  #   url = "github:brndnmtthws/conky";
+  #   inputs.nixpkgs.follows = "nixpkgs";
+  # };
   };
 
   outputs = inputs @ {
