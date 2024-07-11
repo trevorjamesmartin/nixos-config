@@ -22,10 +22,11 @@
     settings = {
       
       monitor = [
-        "eDP-1,1920x1080@60,0x0,1"
         # position desktop monitors (when plugged in)
-        "HDMI-A-1,2560x1440@60,0x0,1"
-        "DP-2,2560x1440@60,2560x0,1"
+        "HDMI-A-1,2560x1440,0x0,1" # left monitor
+        "DP-2,2560x1440,2560x0,1"  # right monitor
+        ",preferred,auto,1"        # everything else (includes laptop)
+        #"eDP-1,1920x1080@60,auto,1" # laptop screen
       ];
 
       xwayland = {
@@ -33,7 +34,10 @@
       };
 
       workspace = [
-        "special:special, on-created-empty:$terminal"
+        "special:neovim, on-created-empty:$terminal nvim"
+        "special:monitor, on-created-empty:$terminal btm"
+        #"special:monitor, on-created-empty:conky"
+        "special:tunes, on-created-empty:spotify"
 
         # left = odd, right = even
         "1, monitor:HDMI-A-1" 
@@ -50,7 +54,7 @@
 
       exec-once = [
         # load the essentials
-        "swww init &" # wallpaper agent
+        "swww-daemon &" # wallpaper agent
         "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
         "hyprlock" # lock screen
         "hypridle" # power management
@@ -74,7 +78,6 @@
       ];
 
       # Set programs that you use
-      #"$terminal" = "kitty";
       "$terminal" = "foot";
       "$fileManager" = "thunar";
       "$browser" = "brave";
@@ -85,6 +88,7 @@
 
         touchpad = {
           natural_scroll = "yes";
+          clickfinger_behavior = 1; # two finger rightclick, three finger middleclick
         };
         
         accel_profile = "adaptive";
@@ -216,6 +220,7 @@
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
       windowrulev2 = [
         "maxsize 1400 900,floating:1"
+        #"maxsize 70% 70%,floating:1"
 
         "opacity 1.0:override,fullscreen:(1)"
 
@@ -225,6 +230,9 @@
         "opacity 1.0:override,class:^(gimp)$"
         "opacity 1.0:override,class:^(occulant)$"
         "opacity 0.8:override,class:^(thunar)$"
+        "opacity 1.0:override,class:^(mpv)$"
+        "opacity 1.0:override,class:^(Kodi)$"
+        "minsize 320 240,class:^(mpv)$"
 
         "tag +music, initialTitle:(Spotify)"    # add dynamic tag `music*` to spotify window
         "tag +music, initialTitle:(Spotify Premium)"    # add dynamic tag `music*` to spotify window
@@ -251,8 +259,8 @@
       "$mainMod" = "SUPER";
 
       bind = [
-        "$mainMod, C, movetoworkspace, special"
-        "$mainMod, code:49, togglespecialworkspace"
+        "$mainMod SHIFT, code:49, movetoworkspace, special:neovim"
+        "$mainMod, code:49, togglespecialworkspace, neovim"
         # launcher
         #"$mainMod, ESC, exec, nwg-drawer"       
 
@@ -321,10 +329,11 @@
         "$mainMod SHIFT, 9, movetoworkspace, 9"
         "$mainMod SHIFT, 0, movetoworkspace, 10"
 
+        #"$mainMod , SPACE, togglefloating,"
+
         # Example special workspace (scratchpad)
         #bind = $mainMod, S, togglespecialworkspace, magic
         #bind = $mainMod SHIFT, S, movetoworkspace, special:magic
-
 
         # Scroll through existing workspaces with mainMod + scroll
         "$mainMod, mouse_down, workspace, e+1"
@@ -334,7 +343,8 @@
         "$mainMod, F1, exec, /etc/nixos/dotfiles/hypr/scripts/gamemode.sh"
         
         # power menu
-        "$mainMod SHIFT, Q, exec, rofi -show p -modi p:rofi-power-menu"
+        #"$mainMod SHIFT, Q, exec, rofi -show p -modi p:rofi-power-menu"
+        "$mainMod SHIFT, Q, exec, wlogout"
 
         # display key
         "$mainMod, 235, exec, /etc/nixos/dotfiles/hypr/scripts/toggle-display.sh"
@@ -431,7 +441,6 @@
     # GENERAL
     general {
         no_fade_in = false
-        resize_on_border= true
     }
 
     input-field {
@@ -446,8 +455,6 @@
         fade_on_empty = false
         placeholder_text =
         fail_text = ☠☠☠☠☠☠☠☠☠☠☠☠☠☠
-        font_size = 128 
-        font_family = JetBrains Mono Nerd Font Mono bold
     }
 
     label {
