@@ -3,8 +3,24 @@
   imports = [
     /etc/nixos/modules/home-manager/theme.nix
     /etc/nixos/modules/home-manager/my-neovim.nix
-    /etc/nixos/modules/home-manager/hyprland.nix
+
+    /etc/nixos/modules/home-manager/hyprland 
+    /etc/nixos/modules/home-manager/hyprlock
+    /etc/nixos/modules/home-manager/hypridle
+    /etc/nixos/modules/home-manager/waybar
+    /etc/nixos/modules/home-manager/foot
+    /etc/nixos/modules/home-manager/libinput-gestures
+
   ];
+
+  yoshizl = {
+    waybar.enable = true;
+    hyprland.enable = true;
+    hyprlock.enable = true;
+    hypridle.enable = true;
+    foot.enable = true;
+    libinput-gestures.enable = true;
+  };
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -21,11 +37,7 @@
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.vivaldi = {
-    proprietaryCodecs = true;
-    enableWideVine = true;
-  };
-  
+
   nixpkgs.overlays = [
      (self: super: {
        discord = super.discord.overrideAttrs (
@@ -41,12 +53,10 @@
       "--use-gl=angle"
       "--use-angle=gl"
       "--ozone-platform=wayland"
-
       # to fix journal flood during video playback,
-      # disable (brave://flags) 
+      # disable (chrome://flags) 
       #   "multi-plane formats for hardware video decoder"
       #   "multi-plane formats for software video decoder"
-            
     ];
   };
 
@@ -135,9 +145,9 @@
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
-  home.file = {
-    ".config/kitty/kitty.conf".source = /etc/nixos/dotfiles/kitty/kitty.conf;
-  };
+# home.file = {
+#   ".config/kitty/kitty.conf".source = /etc/nixos/dotfiles/kitty/kitty.conf;
+# };
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a

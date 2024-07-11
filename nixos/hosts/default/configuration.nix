@@ -146,9 +146,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-
   };
 
   programs.hyprlock.enable = true;
@@ -170,9 +168,6 @@
 
   # Enable Xbox controller driver (xpadneo)
   hardware.xpadneo.enable = false;
-  
-  # steam controller
-  # hardware.steam-hardware.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -275,30 +270,12 @@
     antimicroX
     gkrellm
     greetd.greetd
-
-    # interactive monitor
-    bottom
-
-    # gpu (AMD) info
-    radeontop
-
-    conky
     
     plymouth-matrix-theme
     gsettings-desktop-schemas
     gsettings-qt
     libsForQt5.polkit-kde-agent
     
-    waybar
-    # display media information in waybar
-    waybar-mpris
-
-    # wayland screen recorder
-    wl-screenrec
-
-    # wayland colorpicker
-    hyprpicker
-
     # close all windows and exit hyprland
     (pkgs.writeShellScriptBin "graceful-logout" ''
     #!/bin/sh
@@ -434,19 +411,7 @@
     wayland-protocols
     wayland-scanner
     hyprwayland-scanner
-
-    # notifications
-    dunst
-
-    # Hyprland plugins
-    hyprcursor
-    hyprpaper
-    hyprlock
     
-    # trackpad
-    libinput
-    libinput-gestures
-
     # cli tool for interacting with window manager
     wmctrl
     
@@ -457,61 +422,19 @@
     # yaml query
     yq
 
-    # screenshot tool 
-    grim
-    # select util
-    slurp
-    # wayland clipboard
-    wl-clipboard
-    # x11 clipboard
-    xclip
-
     # network
     networkmanagerapplet
 
-    # wayland xrandr
-    wlr-randr
-
-    # wallpaper
-    swww
-
-    # menus
-    rofi-wayland
-    rofi-bluetooth
-    
     # bluetooth
     blueman
     bluez-experimental
     
-    # power menu
-    wlogout
-
     # audio (pipewire) controls
     pavucontrol
 
     # acpi
     power-profiles-daemon
 
-    # display layout
-    wdisplays
-
-    # brightness %
-    brightnessctl
-
-    # file explorer
-    xfce.thunar
-    # thumb nailer
-    xfce.tumbler
-
-    # image viewer
-    oculante
-
-    # video lan cliddent
-    vlc
-    
-    # media players
-    mpv
-    vlc
   ];
 
   programs.thunar.plugins = with pkgs.xfce; [
