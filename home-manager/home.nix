@@ -141,6 +141,20 @@
       sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace -j 4
     '')
 
+
+    (pkgs.writeShellScriptBin "${config.home.username}-collect-garbage" ''
+      echo "Hello, ${config.home.username}! (ready to collect the garbage)"
+      sudo nix-collect-garbage -d
+      nix-collect-garbage -d
+    '')
+
+    (pkgs.writeShellScriptBin "${config.home.username}-optimize" ''
+      echo "Hello, ${config.home.username}! (ready to optimize the Nix store)"
+      sudo nix-store --optimize -vvv
+      nix-store --optimize -vvv
+    '')
+
+
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
