@@ -135,7 +135,7 @@ label:focus {
 }
 
 #cpu {
-  color: #cb221b;
+  /*color: #cb221b;*/
 }
 
 #temperature {
@@ -151,15 +151,15 @@ label:focus {
 }
 
 #backlight {
-  color: #d69821;
+  /*color: #d69821;*/
 }
 
 #pulseaudio {
-  color: #448486;
+  /*color: #448486;*/
 }
 
 #clock {
-  color: #b16186;
+  /*color: #b16186;*/
 }
 
 #battery {

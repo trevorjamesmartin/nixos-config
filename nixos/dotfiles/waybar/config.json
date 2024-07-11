@@ -13,7 +13,9 @@
         "custom/power",
         "custom/separator",
         "hyprland/workspaces",
-        "custom/waybar-mpris"
+        "custom/waybar-mpris",
+        "custom/separator",
+        "custom/tunes",
     ],
     "modules-center": [
         "clock"
@@ -23,6 +25,7 @@
         "cpu",
         "temperature",
         "backlight",
+        "battery",
         "pulseaudio",
         "custom/separator",
         "tray"
@@ -182,6 +185,7 @@
         },
         "on-click": "pavucontrol"
     },
+
     "custom/waybar-mpris": {
         "return-type": "json",
         "exec": "waybar-mpris --position --autofocus", //|sed 's///g'",
@@ -196,20 +200,17 @@
             // "on-scroll-down": "waybar-mpris --send prev",
         "escape": true,
     },
- // "custom/media": {
- //     "interval": 1,
- //     "return-type": "json",
- //     "exec": "waybar-mpris",
- //     "exec-if": "pgrep spotify",
- //     "on-click":"playerctl --player=spotify play-pause",
- //     "escape": true
- // },
+    "custom/tunes": {
+        "format": " {icon} ",
+        "format-icons": "🎶",
+        "on-click": "hyprctl dispatcher togglespecialworkspace tunes"
+    },
     "custom/power": {
         "format": "{icon}",
-        "format-icons": " ",
+        "format-icons": "⏼",
         "exec-on-event": "true",
-        "on-click": "rofi -show p -modi p:rofi-power-menu",
-       "tooltip": false
+        "on-click": "wlogout",
+        "tooltip": false
     },
     "custom/separator": {
         "format": "{icon}",
@@ -217,3 +218,4 @@
         "tooptip": false
     }
 }
+
