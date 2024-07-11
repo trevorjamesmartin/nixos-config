@@ -9,10 +9,49 @@
       ./hardware-configuration.nix
       ./xdg.nix
       ../../cachix.nix
-      
+
+      ../../modules/nixos/theme.nix
+
       #../../modules/nixos/global-theme.nix
       # ../../modules/nixos/gdm-theme.nix
     ];
+
+    boot = {
+      initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
+      initrd.kernelModules = [ ];
+      # enable systemd
+      initrd.systemd.enable = true;
+       
+      consoleLogLevel = 0;
+      initrd.verbose = false;
+
+      kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
+
+      kernelPackages = pkgs.linuxPackages_latest;
+      kernelModules = [ "kvm-amd" "hid-magicmouse" "v4l2loopback" ];
+      loader = {
+        timeout=0;
+        efi.canTouchEfiVariables = true;
+        systemd-boot.enable = true;
+      };
+
+      # use less cache (default 60)
+      kernel.sysctl = { "vm.swappiness" = 10;};
+
+      # Bootloader.
+      plymouth = {
+        enable = true;
+        #theme = lib.mkForce "owl";
+        theme = lib.mkForce "hexa_retro";
+        themePackages = [
+          pkgs.plymouth-matrix-theme
+          pkgs.adi1090x-plymouth-themes
+        ];
+      };
+
+  };
+
+
   
   # enale opengl options that help with gaming
   hardware.graphics = {
@@ -26,23 +65,6 @@
   services.fwupd.enable = true;
 
   services.xserver.videoDrivers = ["amdgpu"];
-  
-  # try not to use cache (default 60)
-  boot.kernel.sysctl = { "vm.swappiness" = 10;};
-
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.plymouth = {
-    enable = true;
-    theme = lib.mkForce "owl";
-    themePackages = [
-      pkgs.plymouth-matrix-theme
-      pkgs.adi1090x-plymouth-themes
-    ];
-  };
-  boot.loader.grub.fontSize = "128";
 
   networking.hostName = "thinkpadt14s"; # Define your hostname.
   
@@ -80,8 +102,7 @@
     enable = true;
     settings = rec {
       initial_session = {
-        #command = "${pkgs.sway}/bin/sway";
-        command = "dbus-run-session $(${pkgs.hyprland}/bin/Hyprland >/dev/null 2>&1) >/dev/null 2>&1";
+        command = "${pkgs.hyprland}/bin/Hyprland > /tmp/hyprgrace.log 2>&1";
         user = "tm";
       };
       default_session = initial_session;
@@ -133,15 +154,6 @@
   services.hypridle.enable = true;
 
 
-# services.xserver.displayManager.setupCommands = ''
-#     displays=$(wlr-randr --json |jq length);
-#     if [[ $displays -gt 1 ]] then
-#       primary=$(wlr-randr --json |jq -r '.[0]| .name');
-#       wlr-randr --output $primary --off;
-#     fi
-#     echo "SETUP COMMANDS" >> /tmp/hyprexitwithgrace.log
-# '';
-
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
 
@@ -175,32 +187,29 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
-  services.plex = {
-    enable = false;
-    openFirewall = false;
-  };
+  
   environment.variables.XDG_RUNTIME_DIR = "/run/user/$UID"; # set the runtime directory
 
-  services.gnome.gnome-keyring.enable = true;
-  # security.pam.services.kwallet.enableKwallet = true;
-  security.pam.services.greetd.enableGnomeKeyring = true;
+  # enable wallet support
+  security.pam.services.greetd.enableKwallet = true;
+  security.pam.services.kwallet = {
+    name = "kwallet";
+    enableKwallet = true;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tm = {
     isNormalUser = true;
     description = "Trevor";
     shell = pkgs.zsh;
-    extraGroups = [ "docker" "libvirtd" "networkmanager" "wheel" "input" ];
+    extraGroups = [ "video" "docker" "libvirtd" "networkmanager" "wheel" "input" ];
     packages = with pkgs; [
       pulseaudio
       firefox
       neovim
       chromium
       brave
-      
     ];
-
-
   };
 
   home-manager = {
@@ -218,15 +227,12 @@
       enableWideVine = true;
   };
 
-  # enable WayDroid android emulation
-  # virtualisation.waydroid.enable = true;
+  nixpkgs.config.packageOverrides = pkgs: { 
+    kodi-wayland = pkgs.kodi-wayland.override { 
+      joystickSupport = true;
+    }; 
+  };
 
-  # enable Docker containers
-  #virtualisation.docker.enable = true;
-  #virtualisation.docker.rootless = {
-  #  enable = true;
-  #  setSocketVariable = true;
-  #};
 
   nixpkgs.overlays = [
 
@@ -236,21 +242,47 @@
         scripts = [ self.mpvScripts.mpris self.mpvScripts.uosc ];
       };
     })
+
     # change the 'PAUSE' icon to something in my font set
     (self: super: {
       waybar-mpris = super.waybar-mpris.overrideAttrs (oldAttrs: {
         patches = [ ../../patches/waybar-mpris.patch ];
       });
     })
+
+    
+    # "Set as Wallpaper" (replace with a custom action)
+    #   'eliminate the errant menu entry', 
+    # see https://forum.xfce.org/viewtopic.php?pid=48958#p48958
+    (final: prev: {
+      thunar = prev.xfce.thunar.overrideAttrs(oldAttrs: rec {
+        postFixup = ''
+           rm $out/lib/thunarx-3/thunar-wallpaper-plugin.so 
+           rm $out/lib/thunarx-3/thunar-wallpaper-plugin.la 
+        '';
+      });
+    })
+
   ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    kodi-wayland
+    thunar # for the overlay to take effect, thunar has to be listed
+    antimicroX
+    gkrellm
     greetd.greetd
 
+    # interactive monitor
+    bottom
+
+    # gpu (AMD) info
+    radeontop
+
+    conky
+    
     plymouth-matrix-theme
-    gnome-keyring
     gsettings-desktop-schemas
     gsettings-qt
     libsForQt5.polkit-kde-agent
@@ -273,40 +305,39 @@
     hyprctl dispatch exit
     '')
 
-    # media
-    mpv
-
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     (lua.withPackages(ps: with ps;[ busted luafilesystem ]))
+
     # neofetch
     fastfetch
 
     # development
     git
     gnumake
-    gcc    clang
+    gcc
+    clang
     cmake
     pkg-config
     meson
     cpio
     ninja
 
-    python3
+    # media keys
     playerctl
 
-    nodejs_18
+    # markdown
     pandoc
 
+    # glib library
     glib.dev
+    # Multi-platform library for creating OpenGL contexts and managing input, including keyboard, mouse, joystick and time
     glfw
     
+    # theme
     catppuccin
     catppuccin-gtk
     catppuccin-qt5ct
-    
     catppuccin-cursors.frappeBlue
-    catppuccin-cursors.mochaMauve
 
 #   # Add global theme
     #paper-icon-theme
@@ -316,78 +347,85 @@
 
     unzip
     wget
-    #
+
     mesa
     mesa-demos
+    
     libdrm
     libGL.dev
 
-    # alacritty
-    kitty
-    kitty-img
-    kitty-themes
     udev-gothic-nf
 
     google-chrome
     
     swww
+
+    # QT libs
     libsForQt5.qt5.qtgraphicaleffects
     libsForQt5.qt5.qtsvg
     libsForQt5.qt5ct
+    libsForQt5.qtstyleplugin-kvantum
+    libsForQt5.lightly
     libsForQt5.qt5.qtwayland
     kdePackages.qtwayland # qt6
-
-    #bibata-cursors              
-    #bibata-cursors-translucent  
-    # bibata-extra-cursors
-
-    # Gnome Extensions
-#    gnomeExtensions.dash2dock-lite
-    arc-theme
-    pantheon.elementary-gtk-theme
-    gruvbox-gtk-theme
-
+    qt6Packages.qt6ct
+    qt6.qtwayland
+    
+    # cursors
+    bibata-cursors-translucent  
+    bibata-cursors
+    catppuccin
+    catppuccin-cursors
+    
+    # internet messenger
     telegram-desktop
-    #virt-manager
-    #qemu_kvm
 
+    # shell enhancements
     zsh-powerlevel10k
+
+    # vpn tools
     wireguard-tools
     openvpn
-
-    screen
-    irssi
 
     nix-direnv
     home-manager
     
+    # games
     steam
     steam-run
     mangohud
-
     protonup
-
     lutris
     heroic
     #gogdl
 
+    # extra wine containers 
     bottles
 
-    # kdePackages.drkonqi
-    appimagekit
-    # lbry
-
-    # ... add this line to the rest of your configuration modules
-    nix-ld
-
-    # The module in this repository defines a new module under (programs.nix-ld.dev) instead of (programs.nix-ld) 
-    # to not collide with the nixpkgs version.
+    # kwalllet & friends
+    kdePackages.kwallet
+    libsForQt5.kwallet
+    kdePackages.kwalletmanager
+    libsForQt5.kwalletmanager
+    kdePackages.ksshaskpass
+    kdePackages.kwallet-pam
+    libsForQt5.kwallet-pam
     
+    # tool to package desktop applications as AppImages
+    appimagekit
+
+    # run unpatched dynamic binaries on NixOS
+    nix-ld
+    
+
+    # a program to show the type of file
     file
 
-    fuse2fs
+    # tools for creatings file systems
+    e2fsprogs
     fuse
 
+    # Debian package manager
     dpkg
 
     # wayland / hyprland
@@ -395,50 +433,83 @@
     wayland-scanner
     hyprwayland-scanner
 
-
-     
+    # notifications
     dunst
 
+    # Hyprland plugins
     hyprcursor
     hyprpaper
     hyprlock
     
+    # trackpad
     libinput
     libinput-gestures
+
+    # cli tool for interacting with window manager
     wmctrl
-    xdotool
+    
+    # json query
+    jq
+    # xml query
+    xq-xml
+    # yaml query
+    yq
 
-
-    # screenshot with grim -l 0 -g "$(slurp)" - | wl-copy
+    # screenshot tool 
     grim
     # select util
     slurp
-    # xclip alternative
+    # wayland clipboard
     wl-clipboard
+    # x11 clipboard
+    xclip
 
+    # network
     networkmanagerapplet
 
+    # wayland xrandr
     wlr-randr
+
+    # wallpaper
     swww
+
+    # menus
     rofi-wayland
-    
-    pavucontrol
-    power-profiles-daemon
-    rofi-power-menu
     rofi-bluetooth
+    
+    # bluetooth
     blueman
     bluez-experimental
+    
+    # power menu
+    wlogout
 
+    # audio (pipewire) controls
+    pavucontrol
+
+    # acpi
+    power-profiles-daemon
+
+    # display layout
     wdisplays
+
+    # brightness %
     brightnessctl
 
+    # file explorer
     xfce.thunar
+    # thumb nailer
     xfce.tumbler
+
+    # image viewer
     oculante
 
+    # video lan cliddent
     vlc
-
-
+    
+    # media players
+    mpv
+    vlc
   ];
 
   programs.thunar.plugins = with pkgs.xfce; [
@@ -565,10 +636,10 @@
       font-awesome
       powerline-fonts
       powerline-symbols
-      (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
       xkcd-font
       udev-gothic-nf
-
+      nerdfonts
+      font-awesome
     ];
     fontconfig = {
       localConf = ''

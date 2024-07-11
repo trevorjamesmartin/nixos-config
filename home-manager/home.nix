@@ -34,6 +34,45 @@
      })
   ];
 
+  programs.brave = {
+    enable = true;
+    commandLineArgs = [
+      "--enable-features=VaapiVideoDecodeLinuxGL"
+      "--use-gl=angle"
+      "--use-angle=gl"
+      "--ozone-platform=wayland"
+
+      # to fix journal flood during video playback,
+      # disable (brave://flags) 
+      #   "multi-plane formats for hardware video decoder"
+      #   "multi-plane formats for software video decoder"
+            
+    ];
+  };
+
+  programs.tmux = {
+    enable = true;
+    catppuccin.enable = true;
+    aggressiveResize = true;
+    baseIndex = 1;
+    clock24 = true;
+    sensibleOnTop = true;
+    # This should either be screen-256color or tmux-256color where it exists
+    terminal = "tmux-256color";
+
+    extraConfig = ''
+      set -g status on
+      set -g mouse on
+
+      # Where this shows 'foot' - the value should be whatever $TERM is outside tmux
+      set-option -ga terminal-overrides ",foot:Tc"
+
+      # Catppuccin options
+      set -g @catppuccin_host 'on'
+      set -g @catppuccin_window_tabs_enabled 'on'
+    '';
+  };
+
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -44,49 +83,17 @@
      hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
      hyprctl dispatch exit
      '')   
-    libsForQt5.qtstyleplugin-kvantum
-    libsForQt5.lightly
-    qt6Packages.qt6ct
-    qt6.qtwayland
-    qt5.qtwayland
 
-    # QT (KDE/Plasma) File manager 
-    #dolphin
-
-    # IRC client
-    halloy
-
-    conky
-
-    # gpu (AMD) info
-    radeontop
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    #(pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-    nerdfonts
-    font-awesome
-    
-    catppuccin
-    bibata-cursors
-    catppuccin-cursors
-
-    xclip
-    xdotool
     htop
     ripgrep
     ripgrep-all
     tree
     cmatrix
-    asciiquarium
+    
     imagemagick
     gh
-    jq
     cava
-    antimicroX
-    imagemagick
+    
 
     # web browsers
     google-chrome
@@ -95,6 +102,8 @@
 
     # photo editor
     gimp
+
+    inkscape
 
     # emoji picker
     smile
@@ -107,16 +116,8 @@
     # A Wayland native snapshot editing tool, inspired by Snappy on macOS
     swappy
 
-    # Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.
-    nwg-look 
-    nwg-drawer
-    nwg-dock-hyprland
     # irc
-    quassel
-
-    plex-mpv-shim
     spotify
-
 
     (pkgs.writeShellScriptBin "${config.home.username}-local-update" ''
       echo "Hello, ${config.home.username}! (ready to update & run home-manager switch...)"
@@ -129,7 +130,6 @@
       sudo nix flake update /etc/nixos --impure
       sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace -j 4
     '')
-
 
   ];
 
@@ -157,32 +157,8 @@
   #
   home.sessionVariables = {
     EDITOR = "nvim";
-    TERM = "kitty";
-    TERMINAL = "kitty";
-    #DOTFILES = "/etc/nixos/dotfiles";
-  };
-
-  programs.tmux = {
-    enable = true;
-    catppuccin.enable = true;
-    aggressiveResize = true;
-    baseIndex = 1;
-    clock24 = true;
-    sensibleOnTop = true;
-    # This should either be screen-256color or tmux-256color where it exists
-    terminal = "tmux-256color";
-
-    extraConfig = ''
-      set -g status on
-      set -g mouse on
-
-      # Where this shows 'kitty' - the value should be whatever $TERM is outside tmux
-      set-option -ga terminal-overrides ",kitty:Tc"
-
-      # Catppuccin options
-      set -g @catppuccin_host 'on'
-      set -g @catppuccin_window_tabs_enabled 'on'
-    '';
+    TERM = "foot";
+    TERMINAL = "foot";
   };
 
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
