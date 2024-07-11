@@ -12,6 +12,8 @@
 
       ../../modules/nixos/theme.nix
 
+      ./vpn.nix
+      
       #../../modules/nixos/global-theme.nix
       # ../../modules/nixos/gdm-theme.nix
     ];
