@@ -9,9 +9,9 @@
     /etc/nixos/modules/home-manager/hypridle
     /etc/nixos/modules/home-manager/waybar
     /etc/nixos/modules/home-manager/foot
+    /etc/nixos/modules/home-manager/kitty
     /etc/nixos/modules/home-manager/libinput-gestures
     /etc/nixos/modules/home-manager/conky
-
   ];
 
   yoshizl = {
@@ -20,6 +20,7 @@
     hyprlock.enable = true;
     hypridle.enable = true;
     foot.enable = true;
+    kitty.enable = false;
     libinput-gestures.enable = true;
     conky.enable = true;
   };
@@ -159,35 +160,13 @@
 
   ];
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-# home.file = {
-#   ".config/kitty/kitty.conf".source = /etc/nixos/dotfiles/kitty/kitty.conf;
-# };
-
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/tm/etc/profile.d/hm-session-vars.sh
-  #
   home.sessionVariables = {
     EDITOR = "nvim";
-    TERM = "foot";
-    TERMINAL = "foot";
   };
 
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
+
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
