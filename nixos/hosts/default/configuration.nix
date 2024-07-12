@@ -43,14 +43,11 @@
       # Bootloader.
       plymouth = {
         enable = true;
-        #theme = lib.mkForce "owl";
-        theme = lib.mkForce "hexa_retro";
+        theme = lib.mkForce "bgrt";
         themePackages = [
-          pkgs.plymouth-matrix-theme
-          pkgs.adi1090x-plymouth-themes
+          pkgs.nixos-bgrt-plymouth
         ];
       };
-
   };
 
 
