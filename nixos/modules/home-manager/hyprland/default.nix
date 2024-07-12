@@ -55,9 +55,8 @@ in
       # media players
       mpv
       vlc
-
-      conky
-
+      
+      # monitor
       bottom
     ];
 

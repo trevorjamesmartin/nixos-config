@@ -10,6 +10,7 @@
     /etc/nixos/modules/home-manager/waybar
     /etc/nixos/modules/home-manager/foot
     /etc/nixos/modules/home-manager/libinput-gestures
+    /etc/nixos/modules/home-manager/conky
 
   ];
 
@@ -20,6 +21,7 @@
     hypridle.enable = true;
     foot.enable = true;
     libinput-gestures.enable = true;
+    conky.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
