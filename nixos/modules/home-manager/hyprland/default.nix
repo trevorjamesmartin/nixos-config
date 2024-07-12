@@ -58,6 +58,76 @@ in
       
       # monitor
       bottom
+
+
+      #########
+      (pkgs.writeShellScriptBin "external-monitor-check" ''
+        if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
+      '')
+
+      (pkgs.writeShellScriptBin "toggle-gamemode" ''
+        #!/usr/bin/env sh
+        HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
+        if [ "$HYPRGAMEMODE" = 1 ] ; then
+            # remove the bar
+            ps -ea |grep waybar|awk '{print $1}' | xargs kill -9 --
+            # remove the dock
+            ps -ea |grep nwg-dock |awk '{print $1}'|xargs kill -9
+            # reclaim space
+            hyprctl --batch "\
+                keyword animations:enabled 0;\
+                keyword decoration:drop_shadow 0;\
+                keyword decoration:blur:enabled 0;\
+                keyword general:gaps_in 0;\
+                keyword general:gaps_out 0;\
+                keyword general:border_size 1;\
+                keyword decoration:rounding 0"
+            exit
+        fi
+        hyprctl reload
+      '')
+
+      (pkgs.writeShellScriptBin "toggle-display" ''
+        if [[ $1 != "" ]]
+        then
+          primary=$1
+        else
+          primary=$(wlr-randr --json |jq -r ".[0]| .name");
+        fi
+
+        toggled=$(wlr-randr --json |jq ".[]| {name: .name, enabled: .enabled } | if .enabled == false then .name else empty end");
+
+        if [[ $toggled != "" ]] then
+          echo $toggled | xargs -I{} wlr-randr --output {} --on;
+        else
+          wlr-randr --output $primary --off;
+        fi
+      '')
+
+      (pkgs.writeShellScriptBin "graceful-logout" ''
+        HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
+        hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
+        hyprctl dispatch exit
+      '')
+
+      (pkgs.writeShellScriptBin "cursor-select" ''
+        SELECTED=$(find /run/current-system/sw/share/icons -maxdepth 1 -type d| cut -d '/' -f 7|sort |tail -n +2|rofi -dmenu -i -p "Cursor theme")
+        if [ -n "$SELECTED" ]; then
+            THEME="$SELECTED"
+            SIZE=$(rofi -dmenu -p "Cursor Size" -theme-str 'listview {lines: 0;}')
+            if [ -n "$SIZE" ]; then
+                export XCURSOR_THEME="$THEME"
+                export XCURSOR_SIZE="$SIZE"
+                hyprctl setcursor $XCURSOR_THEME $XCURSOR_SIZE
+                mkdir -p ~/.icons/default
+                echo "[Icon Theme]" > ~/.icons/default/index.theme
+                echo "Inherits=$XCURSOR_THEME" >> ~/.icons/default/index.theme
+            fi
+        fi
+      '')
+
+
+
     ];
 
     wayland.windowManager.hyprland = {
@@ -83,8 +153,8 @@ in
         
         monitor = [
           # position desktop monitors (when plugged in)
-          "HDMI-A-1,2560x1440,0x0,1" # left monitor
-          "DP-2,2560x1440,2560x0,1"  # right monitor
+          "DP-2,2560x1440,0x0,1"  # left monitor
+          "HDMI-A-1,2560x1440,2560x0,1" # right monitor
           ",preferred,auto,1"        # everything else (includes laptop)
           #"eDP-1,1920x1080@60,auto,1" # laptop screen
         ];
@@ -96,20 +166,19 @@ in
         workspace = [
           "special:neovim, on-created-empty:$terminal nvim"
           "special:monitor, on-created-empty:$terminal btm"
-          #"special:monitor, on-created-empty:conky"
           "special:tunes, on-created-empty:spotify"
 
           # left = odd, right = even
-          "1, monitor:HDMI-A-1" 
-          "2, monitor:DP-2"
-          "3, monitor:HDMI-A-1"
-          "4, monitor:DP-2"
-          "5, monitor:HDMI-A-1"
-          "6, monitor:DP-2"
-          "7, monitor:HDMI-A-1"
-          "8, monitor:DP-2"
-          "9, monitor:HDMI-A-1"
-          "10, monitor:DP-2"
+          "1, monitor:DP-2"
+          "2, monitor:HDMI-A-1" 
+          "3, monitor:DP-2"
+          "4, monitor:HDMI-A-1"
+          "5, monitor:DP-2"
+          "6, monitor:HDMI-A-1"
+          "7, monitor:DP-2"
+          "8, monitor:HDMI-A-1"
+          "9, monitor:DP-2"
+          "10, monitor:HDMI-A-1"
         ];
 
         exec-once = [
@@ -125,9 +194,10 @@ in
 
         exec = [
           # check the external monitor situation
-          "~/.config/hypr/scripts/external.sh"
+          "external-monitor-check"
+          # "~/.config/hypr/scripts/external.sh"
           # reload home-manager session variables
-          ". ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
+          # ". ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
           # waybar
           "pidof waybar && pidof waybar|xargs kill -9 -- ;waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css"
           # conky
@@ -401,14 +471,14 @@ in
           "$mainMod, mouse_up, workspace, e-1"
           
           # game mode is super fun
-          "$mainMod, F1, exec, ~/.config/hypr/scripts/gamemode.sh"
+          "$mainMod, F1, exec, toggle-gamemode"
           
           # power menu
           #"$mainMod SHIFT, Q, exec, rofi -show p -modi p:rofi-power-menu"
           "$mainMod SHIFT, Q, exec, wlogout"
 
           # display key
-          "$mainMod, 235, exec, ~/.config/hypr/scripts/toggle-display.sh"
+          "$mainMod, 235, exec, toggle-display"
         ];
 
         bindl = [
@@ -416,8 +486,6 @@ in
           ",switch:off:[1a50230],exec,hyprctl keyword monitor \"eDP-1, 1920x1080, 0x0, 1\""
         ];
 
-        #  "bindl=,switch:on:[1a50230],exec,hyprctl keyword monitor \"eDP-1, disable\""
-        #  "bindl=,switch:off:[1a50230],exec,hyprctl keyword monitor \"eDP-1, 1920x1080, 0x0, 1\""
         bindm = [
           # Move/resize windows with mainMod + LMB/RMB and dragging
           "$mainMod, mouse:272, movewindow"
@@ -430,13 +498,6 @@ in
           ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ];
 
-      };
-    };
-
-    home.file = { 
-      ".config/hypr/scripts" = {
-        source = ./scripts;
-        recursive = true;
       };
     };
 
