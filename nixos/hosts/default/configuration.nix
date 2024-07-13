@@ -11,7 +11,10 @@
       ../../cachix.nix
       ../../modules/nixos/theme.nix
       ./vpn.nix
+      ../../modules/nixos/thunar
     ];
+
+    yoshizl.thunar.enable = true;
 
     boot = {
       initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
@@ -221,37 +224,6 @@
   };
 
 
-  nixpkgs.overlays = [
-
-    # allow mpv to be controlled by playerctl
-    (self: super: {
-      mpv = super.mpv.override {
-        scripts = [ self.mpvScripts.mpris self.mpvScripts.uosc ];
-      };
-    })
-
-    # change the 'PAUSE' icon to something in my font set
-    (self: super: {
-      waybar-mpris = super.waybar-mpris.overrideAttrs (oldAttrs: {
-        patches = [ ../../patches/waybar-mpris.patch ];
-      });
-    })
-
-    
-    # "Set as Wallpaper" (replace with a custom action)
-    #   'eliminate the errant menu entry', 
-    # see https://forum.xfce.org/viewtopic.php?pid=48958#p48958
-    (final: prev: {
-      thunar = prev.xfce.thunar.overrideAttrs(oldAttrs: rec {
-        postFixup = ''
-           rm $out/lib/thunarx-3/thunar-wallpaper-plugin.so 
-           rm $out/lib/thunarx-3/thunar-wallpaper-plugin.la 
-        '';
-      });
-    })
-
-  ];
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -418,15 +390,8 @@
 
   ];
 
-  programs.thunar.plugins = with pkgs.xfce; [
-    thunar-archive-plugin
-    thunar-volman
-    thunar-media-tags-plugin
-  ];
 
-  services.gvfs.enable = true; # mount, trash and other functionality
-  services.tumbler.enable = true; # thumbnail support
- 
+
 
   environment.sessionVariables = {
     #XDG_RUNTIME_DIR = "/run/user/$(id -u)";

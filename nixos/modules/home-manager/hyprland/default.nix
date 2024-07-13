@@ -7,6 +7,22 @@ in
   options.yoshizl.hyprland.enable = mkEnableOption "yoshizl Hyprland rice";
 
   config = mkIf cfg.enable {
+    nixpkgs.overlays = [
+      # allow mpv to be controlled by playerctl
+      (self: super: {
+        mpv = super.mpv.override {
+          scripts = [ self.mpvScripts.mpris self.mpvScripts.uosc ];
+        };
+      })
+      # change the 'PAUSE' icon to something in my font set
+      (self: super: {
+        waybar-mpris = super.waybar-mpris.overrideAttrs (oldAttrs: {
+          patches = [ ../../../patches/waybar-mpris.patch ];
+        });
+      })
+
+    ];
+
     home.packages = with pkgs;[
       # wayland colorpicker
       hyprpicker
@@ -19,9 +35,6 @@ in
       dunst
       # power menu
       wlogout
-      # wallpaper
-      swww
-
       # menus
       rofi-wayland
       rofi-bluetooth
@@ -43,11 +56,6 @@ in
 
       # brightness %
       brightnessctl
-
-      # file explorer
-      xfce.thunar
-      # thumb nailer
-      xfce.tumbler
 
       # image viewer
       oculante
@@ -158,8 +166,8 @@ in
         
         monitor = [
           # position desktop monitors (when plugged in)
-          "DP-2,2560x1440,0x0,1"  # left monitor
-          "HDMI-A-1,2560x1440,2560x0,1" # right monitor
+          #"DP-2,2560x1440,0x0,1"  # left monitor
+          #"HDMI-A-1,2560x1440,2560x0,1" # right monitor
           ",preferred,auto,1"        # everything else (includes laptop)
           #"eDP-1,1920x1080@60,auto,1" # laptop screen
         ];
@@ -188,7 +196,7 @@ in
 
         exec-once = [
           # load the essentials
-          "swww-daemon &" # wallpaper agent
+          "hyprpaper &" # wallpaper agent
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
           "hyprlock" # lock screen
           "hypridle" # power management
@@ -237,7 +245,7 @@ in
           # See https://wiki.hyprland.org/Configuring/Variables/ for more
           gaps_in = 1;
           gaps_out = 0;
-          border_size = 2;
+          border_size = 1;
           "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
           "col.inactive_border" = "rgba(595959aa)";
           layout = "dwindle";
@@ -409,7 +417,7 @@ in
           # overview
           "$mainMod, Tab, hyprexpo:expo, toggle"
           # lock screen
-          "$mainMod SHIFT, Delete, exec, pidof hyprlock || hyprlock"
+          "$mainMod SHIFT, Delete, exec, wlogout"
           # brightness control
           ",XF86MonBrightnessUp, exec, brightnessctl set +5%"
           ",XF86MonBrightnessDown, exec, brightnessctl set 5%-"
