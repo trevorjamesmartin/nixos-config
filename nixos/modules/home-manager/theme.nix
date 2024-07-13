@@ -6,7 +6,7 @@ let
   catppuccin_accent = "blue";
   catppuccin_kvantum_theme = "Catppuccin-Frappe-Blue";
   # todo: check how we build these names
-  catppuccin_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard+default";
+  catppuccin_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard";
 in
 {
   home.packages = with pkgs; [
@@ -16,7 +16,6 @@ in
     catppuccin-cursors
     tmuxPlugins.catppuccin
   ];
-
   
   home.pointerCursor = {
     gtk.enable = true;
@@ -24,7 +23,6 @@ in
     name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
     size = 64;
   };
-
 
   # general settings
   catppuccin = {
@@ -46,7 +44,7 @@ in
       set -g status on
       set -g mouse on
 
-      # Where this shows 'alacritty' - the value should be whatever $TERM is outside tmux
+      # Where this shows 'foot' - the value should be whatever $TERM is outside tmux
       set-option -ga terminal-overrides ",foot:Tc"
 
       # Catppuccin options
@@ -59,7 +57,7 @@ in
   gtk = {
     enable = true;
     theme = {
-      name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard+default";
+      name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard";
       package = pkgs.catppuccin-gtk;
     };
  
@@ -98,11 +96,12 @@ in
   };
 
   # link (missing?) gtk4 files
-  home.file.".config/gtk-4.0/gtk-dark.css".source = "${pkgs.catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/gtk-dark.css";
-  #home.file.".config/gtk-4.0/assets" = {
-  #  recursive = true;
-  #  source = "${pkgs.catppuccin-gtk}/share/themes/${catppuccin_name}/gtk-4.0/assets";
-  #};
+  home.file.".config/gtk-4.0/gtk-dark.css".source = 
+      "${pkgs.catppuccin-gtk}/share/themes/catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard/gtk-4.0/gtk-dark.css";
+  home.file.".config/gtk-4.0/assets" = {
+    recursive = true;
+    source = "${pkgs.catppuccin-gtk}/share/themes/catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard/gtk-4.0/assets";
+  };
   home.sessionVariables = {
     # I'm setting these environment variables for hyprcursor to use
     XCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
