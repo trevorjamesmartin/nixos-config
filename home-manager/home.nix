@@ -2,8 +2,7 @@
 {
   imports = [
     /etc/nixos/modules/home-manager/theme.nix
-    /etc/nixos/modules/home-manager/my-neovim.nix
-
+    /etc/nixos/modules/home-manager/neovim
     /etc/nixos/modules/home-manager/hyprland 
     /etc/nixos/modules/home-manager/hyprlock
     /etc/nixos/modules/home-manager/hypridle
@@ -23,6 +22,7 @@
     kitty.enable = false;
     libinput-gestures.enable = true;
     conky.enable = true;
+    neovim.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -66,13 +66,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-     (pkgs.writeShellScriptBin "graceful-logout" ''
-     #!/bin/sh
-     HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
-     hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
-     hyprctl dispatch exit
-     '')   
-
     htop
     ripgrep
     ripgrep-all
@@ -82,32 +75,25 @@
     imagemagick
     gh
     cava
-    
 
     # web browsers
     google-chrome
     vivaldi
-    firefox
+    chromium
 
-    # photo editor
+    # image editors
     gimp
-
     inkscape
 
-    # emoji picker
-    smile
     # chat
-
     discord
     betterdiscord-installer
     betterdiscordctl
 
-    # A Wayland native snapshot editing tool, inspired by Snappy on macOS
-    swappy
-
-    # irc
+    # music
     spotify
 
+    # scripts
     (pkgs.writeShellScriptBin "${config.home.username}-local-update" ''
       echo "Hello, ${config.home.username}! (ready to update & run home-manager switch...)"
       nix flake update ~/.config/home-manager
@@ -120,7 +106,6 @@
       sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace -j 4
     '')
 
-
     (pkgs.writeShellScriptBin "${config.home.username}-collect-garbage" ''
       echo "Hello, ${config.home.username}! (ready to collect the garbage)"
       sudo nix-collect-garbage -d
@@ -132,16 +117,9 @@
       sudo nix-store --optimize -vvv
       nix-store --optimize -vvv
     '')
-
-
   ];
 
-  home.sessionVariables = {
-    EDITOR = "nvim";
-  };
-
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
-
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

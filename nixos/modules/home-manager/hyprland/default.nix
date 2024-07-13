@@ -55,10 +55,15 @@ in
       # media players
       mpv
       vlc
+
+      # emoji picker
+      smile
+
+      # A Wayland native snapshot editing tool, inspired by Snappy on macOS
+      swappy
       
       # monitor
       bottom
-
 
       #########
       (pkgs.writeShellScriptBin "external-monitor-check" ''

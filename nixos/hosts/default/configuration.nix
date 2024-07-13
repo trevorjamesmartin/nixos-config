@@ -9,13 +9,8 @@
       ./hardware-configuration.nix
       ./xdg.nix
       ../../cachix.nix
-
       ../../modules/nixos/theme.nix
-
       ./vpn.nix
-      
-      #../../modules/nixos/global-theme.nix
-      # ../../modules/nixos/gdm-theme.nix
     ];
 
     boot = {
@@ -198,11 +193,9 @@
     shell = pkgs.zsh;
     extraGroups = [ "video" "docker" "libvirtd" "networkmanager" "wheel" "input" ];
     packages = with pkgs; [
-      pulseaudio
       firefox
-      neovim
-      chromium
-      brave
+      pulseaudio
+      vim
     ];
   };
 
@@ -262,7 +255,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    kodi-wayland
     thunar # for the overlay to take effect, thunar has to be listed
     antimicroX
     gkrellm
@@ -273,14 +265,6 @@
     gsettings-qt
     libsForQt5.polkit-kde-agent
     
-    # close all windows and exit hyprland
-    (pkgs.writeShellScriptBin "graceful-logout" ''
-    #!/bin/sh
-    HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
-    hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
-    hyprctl dispatch exit
-    '')
-
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     (lua.withPackages(ps: with ps;[ busted luafilesystem ]))
 
