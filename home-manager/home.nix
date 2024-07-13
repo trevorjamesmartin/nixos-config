@@ -6,6 +6,7 @@
     /etc/nixos/modules/home-manager/hyprland 
     /etc/nixos/modules/home-manager/hyprlock
     /etc/nixos/modules/home-manager/hypridle
+    /etc/nixos/modules/home-manager/hyprpaper
     /etc/nixos/modules/home-manager/waybar
     /etc/nixos/modules/home-manager/foot
     /etc/nixos/modules/home-manager/kitty
@@ -18,6 +19,7 @@
     hyprland.enable = true;
     hyprlock.enable = true;
     hypridle.enable = true;
+    hyprpaper.enable = true;
     foot.enable = true;
     kitty.enable = false;
     libinput-gestures.enable = true;
