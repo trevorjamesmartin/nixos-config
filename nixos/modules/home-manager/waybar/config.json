@@ -1,6 +1,6 @@
 {
     "bar_id": "bar-0",
-    "ipc": true,
+    "ipc": false,
     "layer": "top",
     "position": "top",
     "height": 30,
@@ -85,9 +85,8 @@
     },
     "temperature": {
         "thermal-zone": 2,
-        "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "format-critical": "{temperatureC}°C {icon}",
-        "critical-threshold": 80,
+        "hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+        "critical-threshold": 84,
         "interval": 2,
         "format": "{temperatureC}°C ",
         "format-icons": [
