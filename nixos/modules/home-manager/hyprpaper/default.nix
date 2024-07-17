@@ -21,11 +21,11 @@ in {
       '')
     ];
 
-    home.file.".config/hypr/hyprpaper.conf".source = ''
+    home.file.".config/hypr/hyprpaper.conf".text = ''
       preload = /home/tm/Pictures/background.jpg
       wallpaper = eDP-1,/home/tm/Pictures/background.jpg
       splash = false 
-    ''
+    '';
   
   };
 
