@@ -7,7 +7,9 @@ in {
   config = mkIf cfg.enable {
 
     home.packages = [
-        pkgs.hyprpaper
+      
+      pkgs.hyprpaper
+      
       (pkgs.writeShellScriptBin "set-active-wallpaper" ''
         if [[ -f $1 ]]
         then
@@ -16,17 +18,17 @@ in {
           prevImage=$(hyprctl hyprpaper listactive |cut -d'=' -f 2);
           hyprctl hyprpaper preload $nextImage;
           hyprctl hyprpaper wallpaper $monitor,$nextImage;
-          [[ $prevImage != $nextImage ]] && hyprctl hyprpaper unload $prevImage;
+          [[ $prevImage != $nextImage ]] && (
+            hyprctl hyprpaper unload $prevImage;
+            [[ -f /tmp/hyprpapertemp ]] && rm /tmp/hyprpapertemp;
+            ~/.config/hypr/hyprpaperPlanes.sh
+            );
         fi
       '')
     ];
 
-    home.file.".config/hypr/hyprpaper.conf".text = ''
-      preload = /home/tm/Pictures/background.jpg
-      wallpaper = eDP-1,/home/tm/Pictures/background.jpg
-      splash = false 
-    '';
-  
+    home.file.".config/hypr/hyprpaperPlanes.sh".source = ./foo.sh;
+    
   };
 
 }
