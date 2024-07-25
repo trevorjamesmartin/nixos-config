@@ -12,7 +12,7 @@ initialize_file () {
                 echo ''wallpaper = ${cur_name},${cur_wallpaper}'' >> /tmp/hyprpapertemp;
         done
         echo "splash = false" >> /tmp/hyprpapertemp;
-        cat /tmp/hyprpapertemp|sort > ~/.config/hypr/hyprpaper.conf
+        cat /tmp/hyprpapertemp|sort -u > ~/.config/hypr/hyprpaper.conf
         echo "wrote ~/.config/hypr/hyprpaper.conf";
 }
 
