@@ -166,10 +166,10 @@ in
         
         monitor = [
           # position desktop monitors (when plugged in)
-          #"DP-2,2560x1440,0x0,1"  # left monitor
-          #"HDMI-A-1,2560x1440,2560x0,1" # right monitor
-          ",preferred,auto,1"        # everything else (includes laptop)
-          #"eDP-1,1920x1080@60,auto,1" # laptop screen
+          "eDP-1,1920x1080@60,0x0,1" # laptop screen
+          "DP-2,2560x1440,1920x0,1"  # left monitor
+          "HDMI-A-1,2560x1440,4480x0,1" # right monitor
+          #",preferred,auto,1"        # everything else (includes laptop)
         ];
 
         xwayland = {
@@ -239,6 +239,7 @@ in
           force_no_accel = 0;
           
           kb_layout = "us";
+
         };
 
         general = {
@@ -364,14 +365,17 @@ in
         windowrulev2 = [
           #"maxsize 1400 900,floating:1"
 
-          "opacity 1.0:override,fullscreen:(1)"
-
-          "opacity 0.9 override 0.9 override,class:^(.*)$"
+          "idleinhibit always,initialTitle:^(.*Spotify.*)$"
           
+          "idleinhibit always,tag:nix"
+
+          "opacity 1.0:override,fullscreen:(1)"
+          "opacity 0.9 override 0.9 override,class:^(.*)$"
+
+          "opacity 1.0:override,initialClass:^(brave-browser)$"
           "opacity 1.0 override 1.0 override,title:^(.*YouTube.*)$"
           "opacity 1.0:override,class:^(gimp)$"
           "opacity 1.0:override,class:^(occulant)$"
-          "opacity 0.8:override,class:^(thunar)$"
           "opacity 1.0:override,class:^(mpv)$"
           "opacity 1.0:override,class:^(Kodi)$"
           "minsize 320 240,class:^(mpv)$"
@@ -427,6 +431,15 @@ in
           ",XF86AudioStop, exec, playerctl stop"
           ",XF86AudioPlay, exec, playerctl play-pause"
           ",XF86AudioNext, exec, playerctl next"
+
+          # (fn) f3 
+          ",XF86LaunchA, exec, $menu"
+          ",XF86MenuKB, exec, wlogout"
+
+          
+
+          # Apple Magic Keyboard fingerprint key
+          #",XF86MenuKB"
           
           # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
 
