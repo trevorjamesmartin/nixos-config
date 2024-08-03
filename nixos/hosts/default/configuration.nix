@@ -156,7 +156,15 @@
   services.printing.enable = true;
 
   # Enable bluetooth
-  hardware.bluetooth.enable = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    input = {
+      General = {
+        UserspaceHID = true;
+      };
+    };
+  };
 
   # Enable Xbox controller driver (xone)
   hardware.xone.enable = true;
@@ -379,13 +387,13 @@
 
     # bluetooth
     blueman
-    bluez-experimental
-    
+    bluez
+    bluez-tools
+    libinput
+
+  
     # audio (pipewire) controls
     pavucontrol
-
-    # acpi
-    power-profiles-daemon
 
   ];
 
@@ -503,7 +511,6 @@
       dina-font
       proggyfonts
       gyre-fonts
-      font-awesome
       powerline-fonts
       powerline-symbols
       xkcd-font
@@ -553,6 +560,22 @@
   };
 
   users.groups.netdev.members = [ "nm-openconnect" ];
+
+
+  services.fprintd = {
+
+    enable = true;
+
+  };
+
+  services.upower = {
+    enable = true;
+  };
+
+
+  services.power-profiles-daemon = {
+    enable = true;
+  };
 
   services.avahi = {
     enable = true;
