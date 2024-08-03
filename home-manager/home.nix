@@ -12,6 +12,7 @@
     /etc/nixos/modules/home-manager/kitty
     /etc/nixos/modules/home-manager/libinput-gestures
     /etc/nixos/modules/home-manager/conky
+    /etc/nixos/modules/home-manager/wlogout
   ];
 
   yoshizl = {
@@ -25,6 +26,7 @@
     libinput-gestures.enable = true;
     conky.enable = true;
     neovim.enable = true;
+    wlogout.enable = true;  # 
   };
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -68,6 +70,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+
     htop
     ripgrep
     ripgrep-all
@@ -98,27 +101,36 @@
     # scripts
     (pkgs.writeShellScriptBin "${config.home.username}-local-update" ''
       echo "Hello, ${config.home.username}! (ready to update & run home-manager switch...)"
+      hyprctl dispatch tagwindow +nix
       nix flake update ~/.config/home-manager
       home-manager switch --impure
+      hyprctl dispatch tagwindow -- -nix
     '')
 
     (pkgs.writeShellScriptBin "${config.home.username}-system-update" ''
       echo "Hello, ${config.home.username}! (ready to update & run nixos-rebuild switch...)"
+      hyprctl dispatch tagwindow +nix
       sudo nix flake update /etc/nixos --impure
       sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace -j 4
+      hyprctl dispatch tagwindow -- -nix
     '')
 
     (pkgs.writeShellScriptBin "${config.home.username}-collect-garbage" ''
+      hyprctl dispatch tagwindow +nix
       echo "Hello, ${config.home.username}! (ready to collect the garbage)"
       sudo nix-collect-garbage -d
       nix-collect-garbage -d
+      hyprctl dispatch tagwindow -- -nix
     '')
 
     (pkgs.writeShellScriptBin "${config.home.username}-optimize" ''
+      hyprctl dispatch tagwindow +nix
       echo "Hello, ${config.home.username}! (ready to optimize the Nix store)"
       sudo nix-store --optimize -vvv
       nix-store --optimize -vvv
+      hyprctl dispatch tagwindow -- -nix
     '')
+
   ];
 
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
