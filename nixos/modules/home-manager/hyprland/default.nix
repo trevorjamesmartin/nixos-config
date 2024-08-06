@@ -369,6 +369,8 @@ in
           
           "idleinhibit always,tag:nix"
 
+          "idleinhibit always,fullscreen:true"
+
           "opacity 1.0:override,fullscreen:(1)"
           "opacity 0.9 override 0.9 override,class:^(.*)$"
 
