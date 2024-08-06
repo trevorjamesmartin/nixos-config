@@ -563,9 +563,7 @@
 
 
   services.fprintd = {
-
-    enable = true;
-
+    enable = false; # not building atm
   };
 
   services.upower = {
