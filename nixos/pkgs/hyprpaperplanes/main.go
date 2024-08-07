@@ -53,7 +53,6 @@ func listActive() ([]*plane, error) {
 }
 
 func jsonPrint(activeplanes []*plane) {
-
 	endComma := len(activeplanes) - 1
 	multimon := endComma > 0
 
@@ -75,7 +74,6 @@ func jsonPrint(activeplanes []*plane) {
 }
 
 func unloadWallpaper(image string) {
-	// todo
 	fmt.Printf("unload: %s\n", image)
 	cmd := exec.Command("hyprctl", "hyprpaper", "unload", image)
 	stdout, err := cmd.StdoutPipe()
@@ -106,7 +104,6 @@ func unloadWallpaper(image string) {
 }
 
 func preloadWallpaper(image string) {
-	// todo
 	fmt.Printf("preload: %s\n", image)
 
 	cmd := exec.Command("hyprctl", "hyprpaper", "preload", image)
@@ -138,8 +135,6 @@ func preloadWallpaper(image string) {
 }
 
 func setWallpaper(image string, monitor string) {
-
-	// todo
 	fmt.Printf("set wallpaper: %s,'%s'\n", monitor, image)
 
 	cmd := exec.Command("hyprctl", "hyprpaper", "wallpaper", fmt.Sprintf("%s,%s", monitor, image))
@@ -222,7 +217,6 @@ func activeMonitor() string {
 }
 
 func main() {
-
 	argsWithoutProg := os.Args[1:]
 
 	if len(argsWithoutProg) > 0 {
