@@ -81,7 +81,7 @@ func unloadWallpaper(image string) {
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
@@ -89,8 +89,7 @@ func unloadWallpaper(image string) {
 	err = cmd.Start()
 
 	if err != nil {
-		fmt.Println("ERROR")
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	for scanner.Scan() {
@@ -100,7 +99,7 @@ func unloadWallpaper(image string) {
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
 		cmd.Wait()
-		fmt.Println(scanner.Err())
+		log.Fatal(scanner.Err())
 		return
 	}
 
@@ -114,7 +113,7 @@ func preloadWallpaper(image string) {
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
@@ -122,8 +121,7 @@ func preloadWallpaper(image string) {
 	err = cmd.Start()
 
 	if err != nil {
-		fmt.Println("ERROR")
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	for scanner.Scan() {
@@ -133,7 +131,7 @@ func preloadWallpaper(image string) {
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
 		cmd.Wait()
-		fmt.Println(scanner.Err())
+		log.Fatal(scanner.Err())
 		return
 	}
 
@@ -148,7 +146,7 @@ func setWallpaper(image string, monitor string) {
 	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
 
@@ -156,8 +154,7 @@ func setWallpaper(image string, monitor string) {
 	err = cmd.Start()
 
 	if err != nil {
-		fmt.Println("ERROR")
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	for scanner.Scan() {
@@ -167,7 +164,7 @@ func setWallpaper(image string, monitor string) {
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
 		cmd.Wait()
-		fmt.Println(scanner.Err())
+		log.Fatal(scanner.Err())
 		return
 	}
 
