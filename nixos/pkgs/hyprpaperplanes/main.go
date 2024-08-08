@@ -184,6 +184,8 @@ func updateConfig() {
 
 	defer f.Close()
 
+	defer fmt.Println("ok")
+
 	activeplanes, errListing := listActive()
 
 	if errListing != nil {
