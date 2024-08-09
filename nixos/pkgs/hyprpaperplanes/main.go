@@ -192,12 +192,17 @@ func updateConfig() {
 		log.Fatal(errListing)
 	}
 
-	for _, p := range activeplanes {
-		line1 := fmt.Sprintf("preload = %s", p.paper)
-		fmt.Fprintln(f, line1)
-		line2 := fmt.Sprintf("wallpaper = %s,%s", p.monitor, p.paper)
-		fmt.Fprintln(f, line2)
+	sources := make(map[string]bool)
 
+	for _, p := range activeplanes {
+		if preloaded, _ := sources[p.paper]; !preloaded {
+			fmt.Fprintln(f, fmt.Sprintf("preload = %s", p.paper))
+			sources[p.paper] = true
+		}
+	}
+
+	for _, p := range activeplanes {
+		fmt.Fprintln(f, fmt.Sprintf("wallpaper = %s,%s", p.monitor, p.paper))
 	}
 
 	fmt.Fprintln(f, "splash = false")

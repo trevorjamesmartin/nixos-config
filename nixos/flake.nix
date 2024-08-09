@@ -3,7 +3,7 @@
   
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    #nixpkgs.url = "github:nixos/nixpkgs/24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/24.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     
     catppuccin.url = "github:catppuccin/nix";
@@ -19,15 +19,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-  # conky = {
-  #   url = "github:brndnmtthws/conky";
-  #   inputs.nixpkgs.follows = "nixpkgs";
-  # };
+
   };
 
   outputs = inputs @ {
       self,
       nixos-hardware, 
+      nixpkgs-stable,
       nixpkgs,
       hyprland,
       home-manager,
