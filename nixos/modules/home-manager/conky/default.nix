@@ -10,7 +10,7 @@ in {
         pkgs.conky
     ];
 
-    home.file.".config/conky/conky.conf".source = ./conky.conf;
+    home.file.".config/conky/conky.conf".source = ./conky.lua;
   
   };
 
