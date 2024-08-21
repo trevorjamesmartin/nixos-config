@@ -31,8 +31,9 @@ in
       hyprpaper
       hyprlock
 
-      # notifications
-      dunst
+      libnotify # notify-send
+      dunst     # notifications
+
       # power menu
       wlogout
       # menus
@@ -198,7 +199,7 @@ in
           # load the essentials
           "hyprpaper &" # wallpaper agent
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
-          "hyprlock" # lock screen
+          #"hyprlock" # lock screen
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
@@ -388,17 +389,13 @@ in
           "suppressevent maximize, class:.*" # You'll probably like this.
 
           "stayfocused,class:(Rofi)"  # menu
-          "forceinput,class:(Rofi)"   #
 
-          "float,class:(pavucontrol)"
-          "float,class:(nm-applet)"
+          "float,class:(pavucontrol)" # pulse audio control
+          "float,class:(nm-applet)"   # network manager applet
 
-
-          "float,class:(smile)"       # 
-          "stayfocused,class:(smile)" # emoji picker
-          "forceinput,class:(smile)"  #
-
-          # "rounding 10,class:(smile)" # emoji picker
+          "float,class:it.mijorus.smile"       # emoji picker
+          "stayfocused,class:it.mijorus.smile" # 
+          "decorate off,class:it.mijorus.smile"#
 
         ];
 
@@ -434,14 +431,8 @@ in
           ",XF86AudioPlay, exec, playerctl play-pause"
           ",XF86AudioNext, exec, playerctl next"
 
-          # (fn) f3 
-          ",XF86LaunchA, exec, $menu"
-          ",XF86MenuKB, exec, wlogout"
-
-          
-
-          # Apple Magic Keyboard fingerprint key
-          #",XF86MenuKB"
+          ",XF86LaunchA, exec, $menu"  # Apple Magic Keyboard f3 
+          ",XF86MenuKB, exec, wlogout" # Apple Magic Keyboard power/fprint
           
           # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
 
@@ -463,6 +454,7 @@ in
           "$mainMod, down, movefocus, d"
 
           "$mainMod SHIFT, PRINT, exec, grim -g \"$(slurp)\" - | swappy -f -"
+          "$mainMod CONTROL , KP_INSERT, exec, grim -g \"$(slurp)\" - | swappy -f -"
 
           # Switch workspaces with mainMod + [0-9]
           "$mainMod, 1, workspace, 1"
@@ -476,6 +468,18 @@ in
           "$mainMod, 9, workspace, 9"
           "$mainMod, 0, workspace, 10"
 
+          "$mainMod, KP_End, workspace, 1"
+          "$mainMod, KP_Down, workspace, 2"
+          "$mainMod, KP_Next, workspace, 3"
+          "$mainMod, KP_Left, workspace, 4"
+          "$mainMod, KP_Begin, workspace, 5"
+          "$mainMod, KP_Right, workspace, 6"
+          "$mainMod, KP_Home, workspace, 7"
+          "$mainMod, KP_Up, workspace, 8"
+          "$mainMod, KP_Prior, workspace, 9"
+          "$mainMod, KP_Insert, workspace, 10"
+
+
           # Move active window to a workspace with mainMod + SHIFT + [0-9]
           "$mainMod SHIFT, 1, movetoworkspace, 1"
           "$mainMod SHIFT, 2, movetoworkspace, 2"
@@ -487,6 +491,17 @@ in
           "$mainMod SHIFT, 8, movetoworkspace, 8"
           "$mainMod SHIFT, 9, movetoworkspace, 9"
           "$mainMod SHIFT, 0, movetoworkspace, 10"
+
+          "$mainMod SHIFT, KP_End, movetoworkspace, 1"
+          "$mainMod SHIFT, KP_Down, movetoworkspace, 2"
+          "$mainMod SHIFT, KP_Next, movetoworkspace, 3"
+          "$mainMod SHIFT, KP_Left, movetoworkspace, 4"
+          "$mainMod SHIFT, KP_Begin, movetoworkspace, 5"
+          "$mainMod SHIFT, KP_Right, movetoworkspace, 6"
+          "$mainMod SHIFT, KP_Home, movetoworkspace, 7"
+          "$mainMod SHIFT, KP_Up, movetoworkspace, 8"
+          "$mainMod SHIFT, KP_Prior, movetoworkspace, 9"
+          "$mainMod SHIFT, KP_Insert, movetoworkspace, 10"
 
           #"$mainMod , SPACE, togglefloating,"
 

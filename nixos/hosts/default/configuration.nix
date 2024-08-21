@@ -12,9 +12,12 @@
       ../../modules/nixos/theme.nix
       ./vpn.nix
       ../../modules/nixos/thunar
+      ../../modules/nixos/ladybird
     ];
 
+    yoshizl.ladybird.enable = false;
     yoshizl.thunar.enable = true;
+
 
     boot = {
       initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
@@ -57,6 +60,7 @@
   };
   # Catppuccin Theme
   qt.platformTheme = "qt5ct";
+  qt.style = "kvantum";
   #catppuccin.enable = true;
 
   services.fwupd.enable = true;
@@ -94,16 +98,53 @@
   };
   
   services.xserver.enable=true;
+  
+  # GREETD
+  programs.regreet = {
+    enable = true;
+    settings = {
+
+      background = {
+        path = /etc/nixos/modules/home-manager/hyprlock/lockscreen.jpg;
+        fit = "Cover";
+      };
+      
+      GTK = {
+        application_prefer_dark_theme = true;
+        cursor_theme_name = lib.mkForce "catppuccin-frappe-blue-cursors";
+        font_name = "Cantarell 16";
+        icon_theme_name = lib.mkForce "Papirus-Dark";
+        theme_name = lib.mkForce "catppuccin-frappe-blue-standard";
+      };
+
+      commands = {
+        reboot = [ "systemctl" "reboot" ];
+        poweroff = [ "systemctl" "poweroff" ];
+      };
+      
+      appearance = {
+        greeting_msg = "Welcome";
+      };
+
+    };
+  };
 
   services.greetd = {
     enable = true;
+
     settings = rec {
-      initial_session = {
+      regreet_session = {
+        command = "${pkgs.cage}/bin/cage -s -m last -- regreet";
+        user = "greeter";
+      };
+
+      hyprland_session = {
         command = "${pkgs.hyprland}/bin/Hyprland > /tmp/hyprgrace.log 2>&1";
         user = "tm";
       };
-      default_session = initial_session;
+      default_session = regreet_session;
     };
+  
   };
 
   services.xserver = {
@@ -237,7 +278,8 @@
     thunar # for the overlay to take effect, thunar has to be listed
     antimicroX
     gkrellm
-    greetd.greetd
+    greetd.regreet
+    cage
     
     plymouth-matrix-theme
     gsettings-desktop-schemas
@@ -245,7 +287,8 @@
     libsForQt5.polkit-kde-agent
     
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    (lua.withPackages(ps: with ps;[ busted luafilesystem ]))
+    lua
+    #(lua.withPackages(ps: with ps;[ busted luafilesystem ]))
 
     # neofetch
     fastfetch
@@ -339,7 +382,7 @@
     #gogdl
 
     # extra wine containers 
-    bottles
+    #bottles
 
     # kwalllet & friends
     kdePackages.kwallet
@@ -517,6 +560,7 @@
       udev-gothic-nf
       nerdfonts
       font-awesome
+      helvetica-neue-lt-std
     ];
     fontconfig = {
       localConf = ''
