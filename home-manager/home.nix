@@ -4,31 +4,35 @@
     /etc/nixos/modules/home-manager/theme.nix
     /etc/nixos/modules/home-manager/neovim
     /etc/nixos/modules/home-manager/hyprland 
-    /etc/nixos/modules/home-manager/hyprlock
-    /etc/nixos/modules/home-manager/hypridle
-    /etc/nixos/modules/home-manager/hyprpaper
+
     /etc/nixos/modules/home-manager/waybar
     /etc/nixos/modules/home-manager/foot
     /etc/nixos/modules/home-manager/kitty
-    /etc/nixos/modules/home-manager/libinput-gestures
     /etc/nixos/modules/home-manager/conky
     /etc/nixos/modules/home-manager/wlogout
     /etc/nixos/modules/home-manager/user-scripts
   ];
 
   yoshizl = {
-    waybar.enable = true;
-    hyprland.enable = true;
-    hyprlock.enable = true;
-    hypridle.enable = true;
-    hyprpaper.enable = true;
-    foot.enable = true;
-    kitty.enable = false;
-    libinput-gestures.enable = true;
-    conky.enable = true;
-    neovim.enable = true;
-    wlogout.enable = true;
-    user-scripts.enable = true;
+    waybar.enable = true;                 # (status bar)
+
+    hyprland = {
+      enable = true;                      # Hyprland
+      hyprbars = false;                   # + (titlebars)
+      hyprlock = true;                    # + (screen-lock)
+      hypridle = true;                    # + (lock/suspend when idle)
+      hyprpaper = true;                   # + (desktop wallpaper)
+      hyprexpo = true;                    # + (overview of workspaces)
+    };
+
+    foot.enable = true;                   # (terminal emulator)
+    kitty.enable = false;                 # (terminal emulator)
+
+    conky.enable = true;                  # lightweight system monitor
+    neovim.enable = true;                 # code editor
+    wlogout.enable = true;                # logout menu
+
+    user-scripts.enable = true;           # scripts are prefixed by "$USER-"
   };
 
   # Home Manager needs a bit of information about you and the paths it should

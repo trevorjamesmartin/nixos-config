@@ -13,10 +13,13 @@
       ./vpn.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/ladybird
+      ../../modules/nixos/greeter
     ];
 
     yoshizl.ladybird.enable = false;
     yoshizl.thunar.enable = true;
+
+    yoshizl.greeter.enable = true;
 
 
     boot = {
@@ -98,54 +101,6 @@
   };
   
   services.xserver.enable=true;
-  
-  # GREETD
-  programs.regreet = {
-    enable = true;
-    settings = {
-
-      background = {
-        path = /etc/nixos/modules/home-manager/hyprlock/lockscreen.jpg;
-        fit = "Cover";
-      };
-      
-      GTK = {
-        application_prefer_dark_theme = true;
-        cursor_theme_name = lib.mkForce "catppuccin-frappe-blue-cursors";
-        font_name = "Cantarell 16";
-        icon_theme_name = lib.mkForce "Papirus-Dark";
-        theme_name = lib.mkForce "catppuccin-frappe-blue-standard";
-      };
-
-      commands = {
-        reboot = [ "systemctl" "reboot" ];
-        poweroff = [ "systemctl" "poweroff" ];
-      };
-      
-      appearance = {
-        greeting_msg = "Welcome";
-      };
-
-    };
-  };
-
-  services.greetd = {
-    enable = true;
-
-    settings = rec {
-      regreet_session = {
-        command = "${pkgs.cage}/bin/cage -s -m last -- regreet";
-        user = "greeter";
-      };
-
-      hyprland_session = {
-        command = "${pkgs.hyprland}/bin/Hyprland > /tmp/hyprgrace.log 2>&1";
-        user = "tm";
-      };
-      default_session = regreet_session;
-    };
-  
-  };
 
   services.xserver = {
     
@@ -278,8 +233,6 @@
     thunar # for the overlay to take effect, thunar has to be listed
     antimicroX
     gkrellm
-    greetd.regreet
-    cage
     
     plymouth-matrix-theme
     gsettings-desktop-schemas
