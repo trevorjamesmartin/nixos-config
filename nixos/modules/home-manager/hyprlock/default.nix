@@ -15,6 +15,7 @@ in {
     }
 
     general {
+        grace = 7
         no_fade_in = false
     }
 
