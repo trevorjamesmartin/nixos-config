@@ -4,9 +4,34 @@ let
   cfg = config.yoshizl.hyprland;
 in 
 {
-  options.yoshizl.hyprland.enable = mkEnableOption "yoshizl Hyprland rice";
+  imports = [
+    /etc/nixos/modules/home-manager/hyprlock
+    /etc/nixos/modules/home-manager/hypridle
+    /etc/nixos/modules/home-manager/hyprpaper
+  ];
+
+  options.yoshizl = {
+    hyprland.enable = mkEnableOption "yoshizl Hyprland rice";
+
+    hyprland.hyprbars = mkEnableOption "- include hyprbars"; # configured here
+    hyprland.hyprexpo = mkEnableOption "- include hyprexpo"; # configured here
+
+    # configured elsewhere ...
+    hyprland.hyprlock = mkEnableOption "- include hyprlock";
+    hyprland.hypridle = mkEnableOption "- include hypridle";
+    hyprland.hyprpaper = mkEnableOption "- include hyprpaper";
+
+  };
 
   config = mkIf cfg.enable {
+
+    yoshizl = {
+      # try to keep the hypr fam together
+      hyprlock.enable = cfg.hyprlock;
+      hypridle.enable = cfg.hypridle;
+      hyprpaper.enable = cfg.hyprpaper;
+    };
+
     nixpkgs.overlays = [
       # allow mpv to be controlled by playerctl
       (self: super: {
@@ -150,19 +175,13 @@ in
       systemd.enable = true;
 
       plugins = [
-        #pkgs.hyprlandPlugins.borders-plus-plus
-        #pkgs.hyprlandPlugins.hy3
-        
-        #inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-        pkgs.hyprlandPlugins.hyprbars
-        
-        #inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-        pkgs.hyprlandPlugins.hyprexpo
-        
-        #pkgs.hyprlandPlugins.hyprtrails
-        #pkgs.hyprlandPlugins.hyprwinwrap
+        (mkIf config.yoshizl.hyprland.hyprexpo
+          pkgs.hyprlandPlugins.hyprexpo)
+
+        (mkIf config.yoshizl.hyprland.hyprbars
+          pkgs.hyprlandPlugins.hyprbars)
       ];
-    
+
       settings = {
         
         monitor = [
@@ -199,7 +218,7 @@ in
           # load the essentials
           "hyprpaper &" # wallpaper agent
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
-          #"hyprlock" # lock screen
+          "hyprlock" # lock screen
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
@@ -311,7 +330,7 @@ in
 
         plugin = {
             
-          hyprexpo = {
+          hyprexpo = mkIf config.yoshizl.hyprland.hyprexpo {
             columns = 3;
             gap_size = 5;
             bg_col = "rgb(111111)";
@@ -322,15 +341,15 @@ in
             gesture_distance = 300; # how far is the "max"
             gesture_positive = true; # positive = swipe down. Negative = swipe up.
           };
-
-          hyprbars = {
-            bar_height = 24;
+        
+          hyprbars = mkIf config.yoshizl.hyprland.hyprbars {
+            bar_height = 20;
             bar_color = "rgb(48, 52, 70)";
             "col.text" = "rgb(c6d0f5)";
-            bar_text_size = 11;
-            bar_text_font = "Jetbrains Mono Nerd Font Mono Bold";
-            bar_button_padding = 8;
-            bar_padding = 10;
+            bar_text_size = 10;
+            bar_text_font = "monospace";
+            bar_button_padding = 6;
+            bar_padding = 6;
             bar_part_of_window = true;
             
             #bar_precedence_over_border = true; # flicker problem 
@@ -344,8 +363,7 @@ in
               #"0, 18, , hyprctl dispatch fullscreen 2"
               #"0, 18, , hyprctl dispatch togglefloating"
             ];
-
-          };
+        };
 
         };
 
@@ -418,7 +436,9 @@ in
           "$mainMod SHIFT, Minus, exec, hyprpicker -a"
           
           # overview
-          "$mainMod, Tab, hyprexpo:expo, toggle"
+          (mkIf config.yoshizl.hyprland.hyprexpo
+          "$mainMod, Tab, hyprexpo:expo, toggle")
+
           # lock screen
           "$mainMod SHIFT, Delete, exec, wlogout"
           # brightness control
