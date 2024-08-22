@@ -13,12 +13,15 @@
         "custom/power",
         "custom/separator",
         "hyprland/workspaces",
-        "custom/waybar-mpris",
+
         "custom/separator",
-        "custom/tunes",
+        "custom/spotify",
+
+        "cava"
+
     ],
     "modules-center": [
-        "clock"
+        "mpris",
     ],
     "modules-right": [
         "network",
@@ -26,8 +29,11 @@
         "temperature",
         "backlight",
         "battery",
-        "pulseaudio",
+
+        "clock",
         "custom/separator",
+        "pulseaudio",
+
         "tray"
     ],
     "hyprland/workspaces": {
@@ -79,7 +85,9 @@
     },
     "clock": {
         "interval": 60,
-        "format": "  {:%a %b %d  %I:%M %p}",
+        //"format": "  {:%a %b %d  %I:%M %p}",
+        "format": "{:%a %I:%M %p}",
+
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%Y-%m-%d}"
     },
@@ -161,6 +169,29 @@
         "format-disconnected": "󰀦",
         "format-alt": "{ifname}: {ipaddr}/{cidr}"
     },
+
+    "cava": {
+        "framerate": 30,
+        "autosens": 1,
+        "bars": 15,
+        "lower_cutoff_freq": 50,
+        "higher_cutoff_freq": 10000,
+        "method": "pulse",
+        "source": "auto",
+        "stereo": true,
+        "reverse": false,
+        "bar_delimiter": 0,
+        "monstercat": true,
+        "waves": true,
+        "noise_reduction": 0.77,
+        "input_delay": 2,
+        "format": "{icon}",
+        "format-icons" : ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" ],
+        "actions": {
+            "on-click-right": "mode"
+        }
+    },
+
     "pulseaudio": {
         "scroll-step": 1,
         "format": "{volume}% {icon}",
@@ -199,9 +230,9 @@
             // "on-scroll-down": "waybar-mpris --send prev",
         "escape": true,
     },
-    "custom/tunes": {
-        "format": " {icon} ",
-        "format-icons": "🎶",
+    "custom/spotify": {
+        "format": "{icon}",
+        "format-icons": "🎵",
         "on-click": "hyprctl dispatcher togglespecialworkspace tunes"
     },
     "custom/power": {

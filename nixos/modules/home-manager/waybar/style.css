@@ -8,12 +8,11 @@
 
 * {
   min-height: 0;
-  font-family: "JetBrains Mono Nerd Font Mono bold", Helvetica, Roboto, Arial, fileicon, material, sans-serif; 
+  font-family: monospace; 
   font-size: 0.9rem;
 }
 
 window#waybar {
-  /*font-family: "JetBrains Mono NerdFont";*/
   background-color: @bg;
   font-size: 0.9rem;
   color: @fg;
@@ -104,9 +103,13 @@ button:hover {
 }
 
 #custom-spotify {
-  padding-left: 10px;
+  padding-left: 5px;
   padding-right: 5px;
-  color: #1ed760;
+  color: @fg;
+}
+
+#mpris {
+  color: @activegreen;
 }
 
 #network.disconnected,
@@ -170,6 +173,13 @@ label:focus {
   color: #48aa4c;
 }
 
+#cava {
+  margin-left: 5px;
+  margin-right: 5px;
+  font-family: monospace; 
+  font-size: 0.9rem;
+}
+
 /* In case you want to seperate the modules in left/right/center */
 .modules-left { 
   background: @bg; 
@@ -187,4 +197,15 @@ label:focus {
   background: @bg;
   padding-right: 15px; 
   padding-left: 15px; 
-} 
+}
+
+@keyframes spin {
+  to { -gtk-icon-transform: rotate(1turn); }
+}
+
+spinner {
+  animation-name: spin;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
