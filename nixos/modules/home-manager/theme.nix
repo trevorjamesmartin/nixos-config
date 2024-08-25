@@ -7,21 +7,27 @@ let
   catppuccin_kvantum_theme = "Catppuccin-Frappe-Blue";
   # todo: check how we build these names
   catppuccin_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard";
+  cursor_variant = "macOS-BigSur";
+  cursor_size = 32;
 in
 {
   home.packages = with pkgs; [
     catppuccin
     catppuccin-gtk
     catppuccin-qt5ct
-    catppuccin-cursors
+    #catppuccin-cursors
+    apple-cursor
+    whitesur-gtk-theme
     tmuxPlugins.catppuccin
   ];
   
   home.pointerCursor = {
     gtk.enable = true;
-    package = pkgs.catppuccin-cursors.frappeBlue;
-    name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
-    size = 64;
+    #package = pkgs.catppuccin-cursors.frappeBlue;
+    package = pkgs.apple-cursor;
+    name = cursor_variant;
+    #"catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
+    size = cursor_size;
   };
 
   # general settings
@@ -69,9 +75,9 @@ in
       gtk-application-prefer-dark-theme=1;
     };
     
-    iconTheme = {
-      name = "Papirus-Dark";
-    }; 
+    #iconTheme = {
+      #name = "Papirus-Dark";
+    #}; 
   };
 
   # qt settings
@@ -103,11 +109,10 @@ in
     source = "${pkgs.catppuccin-gtk}/share/themes/catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard/gtk-4.0/assets";
   };
   home.sessionVariables = {
-    # I'm setting these environment variables for hyprcursor to use
-    XCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
-    XCURSOR_SIZE  = 64;
-    HYPRCURSOR_SIZE = 64; 
-    HYPRCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
+    XCURSOR_THEME = cursor_variant;
+    XCURSOR_SIZE  = cursor_size;
+    HYPRCURSOR_SIZE = cursor_size; 
+    HYPRCURSOR_THEME = cursor_variant;
     # pretty 
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     QT_AUTO_SCREEN_SCALE_FACTOR = 1;
