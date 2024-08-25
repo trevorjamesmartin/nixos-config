@@ -266,7 +266,7 @@
 #   # Add global theme
     #paper-icon-theme
     papirus-icon-theme
-    catppuccin-papirus-folders
+    
     # Adds a package defining a default icon/cursor theme.
 
     unzip
