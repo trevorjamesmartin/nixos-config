@@ -18,11 +18,13 @@
 
     hyprland = {
       enable = true;                      # Hyprland
-      hyprbars = false;                   # + (titlebars)
+      hyprbars = true;                    # + (titlebars)
       hyprlock = true;                    # + (screen-lock)
       hypridle = true;                    # + (lock/suspend when idle)
       hyprpaper = true;                   # + (desktop wallpaper)
       hyprexpo = true;                    # + (overview of workspaces)
+
+      rofi = true;                        # installs rofi-wayland & rofi-bluetooth
     };
 
     foot.enable = true;                   # (terminal emulator)

@@ -2,12 +2,10 @@
 
 destination=~/nixos-laptop-config
 
-# ensure folders exists
+# ensure folder exists
 mkdir -p $destination/nixos
-mkdir -p $destination/home-manager
 
 fcount=0
-
 
 for f in $(ls /etc/nixos)
 do
@@ -17,13 +15,6 @@ do
 done
 
 
-# copy home-manager files
-for f in $(ls --ignore='.??*' --ignore='.[^.]' --ignore='#*' ~/.config/home-manager)
-do
-        echo "copying : $HOME/.config/home-manager/$f"
-        cp -r ~/.config/home-manager/$f $destination/home-manager
-        fcount=$((fcount + 1)) 
-done
 
 echo $fcount files copied to $destination
 
