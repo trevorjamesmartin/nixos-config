@@ -17,7 +17,9 @@
         "custom/separator",
         "custom/spotify",
 
-        "cava"
+        "cava",
+
+        "custom/wallpaper"
 
     ],
     "modules-center": [
@@ -246,6 +248,12 @@
         "format": "{icon}",
         "format-icons": "|",
         "tooptip": false
-    }
+    },
+    "custom/wallpaper": {
+        "format": "{icon}",
+        "format-icons": "🖵 ",
+        "on-click": "$(cd ~/Pictures/;wallpaper-select)",
+        "tooltip": "Desktop Wallpaper"
+    },
 }
 
