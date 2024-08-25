@@ -4,54 +4,46 @@
 
 { config, pkgs, lib, inputs, ... }:
 {
-  imports =
-    [ # Include the results of the hardware scan.
+  imports = [ 
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./xdg.nix
       ../../cachix.nix
       ../../modules/nixos/theme.nix
       ./vpn.nix
       ../../modules/nixos/thunar
-      ../../modules/nixos/ladybird
       ../../modules/nixos/greeter
-    ];
+      ../../modules/nixos/plymouth
+  ];
 
-    yoshizl.ladybird.enable = false;
-    yoshizl.thunar.enable = true;
+  yoshizl = {
+    thunar.enable = true;
+    plymouth.enable = true;
+    greeter.enable = true;
+  };
 
-    yoshizl.greeter.enable = true;
+  boot = {
+    initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
+    initrd.kernelModules = [ ];
+    # enable systemd
+    initrd.systemd.enable = true;
+     
+    consoleLogLevel = 0;
+    initrd.verbose = false;
 
+    kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
 
-    boot = {
-      initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
-      initrd.kernelModules = [ ];
-      # enable systemd
-      initrd.systemd.enable = true;
-       
-      consoleLogLevel = 0;
-      initrd.verbose = false;
+    kernelPackages = pkgs.linuxPackages_latest;
 
-      kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
+    kernelModules = [ "kvm-amd" "hid-magicmouse" "v4l2loopback" ];
+    
+    loader = {
+      timeout=0;
+      efi.canTouchEfiVariables = true;
+      systemd-boot.enable = true;
+    };
 
-      kernelPackages = pkgs.linuxPackages_latest;
-      kernelModules = [ "kvm-amd" "hid-magicmouse" "v4l2loopback" ];
-      loader = {
-        timeout=0;
-        efi.canTouchEfiVariables = true;
-        systemd-boot.enable = true;
-      };
-
-      # use less cache (default 60)
-      kernel.sysctl = { "vm.swappiness" = 10;};
-
-      # Bootloader.
-      plymouth = {
-        enable = true;
-        theme = lib.mkForce "bgrt";
-        themePackages = [
-          pkgs.nixos-bgrt-plymouth
-        ];
-      };
+    kernel.sysctl = { "vm.swappiness" = 10;};
   };
 
 
@@ -61,10 +53,7 @@
     enable = true;
     enable32Bit = true;
   };
-  # Catppuccin Theme
-  qt.platformTheme = "qt5ct";
-  qt.style = "kvantum";
-  #catppuccin.enable = true;
+
 
   services.fwupd.enable = true;
 
@@ -223,7 +212,7 @@
   nixpkgs.config.packageOverrides = pkgs: { 
     kodi-wayland = pkgs.kodi-wayland.override { 
       joystickSupport = true;
-    }; 
+    };
   };
 
 
@@ -410,12 +399,7 @@
     CLUTTER_BACKEND = "wayland";
     MOZ_ENABLE_WAYLAND = "1";
 
-    # set cursor before login ?
-    #XCURSOR_THEME = "${catppuccin_cursor_name}";
-    XCURSOR_SIZE  = 64;
-    #HYPRCURSOR_THEME = "${catppuccin_cursor_name}";
-    HYPRCURSOR_SIZE = 64;
-    QT_QPA_PLATFORMTHEME = "qt5ct";
+    #QT_QPA_PLATFORMTHEME = "qt5ct";
   };
 
   programs.gamemode.enable = true;
