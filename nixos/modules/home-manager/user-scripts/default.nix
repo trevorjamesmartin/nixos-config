@@ -11,8 +11,14 @@ in {
       (pkgs.writeShellScriptBin "${config.home.username}-local-update" ''
         echo "Hello, ${config.home.username}! (ready to update & run home-manager switch...)"
         hyprctl dispatch tagwindow +nix
-        nix flake update ~/.config/home-manager
-        home-manager switch --impure
+        echo "[enter home mangager]"
+        pushd ~/.config/home-manager
+        echo "[flake update]"
+        nix flake update .
+        echo "[home-manger switch]"
+        home-manager switch --impure --show-trace
+        echo "[exit home-manager]"
+        popd
         hyprctl dispatch tagwindow -- -nix
       '')
 
