@@ -5,9 +5,10 @@ let
 in 
 {
   imports = [
-    /etc/nixos/modules/home-manager/hyprlock
-    /etc/nixos/modules/home-manager/hypridle
-    /etc/nixos/modules/home-manager/hyprpaper
+    ../hyprlock
+    ../hypridle
+    ../hyprpaper
+    ../rofi
   ];
 
   options.yoshizl = {
@@ -21,6 +22,8 @@ in
     hyprland.hypridle = mkEnableOption "- include hypridle";
     hyprland.hyprpaper = mkEnableOption "- include hyprpaper";
 
+    hyprland.rofi = mkEnableOption "- w/ rofi";
+
   };
 
   config = mkIf cfg.enable {
@@ -30,6 +33,8 @@ in
       hyprlock.enable = cfg.hyprlock;
       hypridle.enable = cfg.hypridle;
       hyprpaper.enable = cfg.hyprpaper;
+
+      rofi.enable = cfg.rofi;
     };
 
     nixpkgs.overlays = [
@@ -61,9 +66,6 @@ in
 
       # power menu
       wlogout
-      # menus
-      rofi-wayland
-      rofi-bluetooth
       
       # wayland xrandr
       wlr-randr
@@ -149,21 +151,6 @@ in
         hyprctl dispatch exit
       '')
 
-      (pkgs.writeShellScriptBin "cursor-select" ''
-        SELECTED=$(find /run/current-system/sw/share/icons -maxdepth 1 -type d| cut -d '/' -f 7|sort |tail -n +2|rofi -dmenu -i -p "Cursor theme")
-        if [ -n "$SELECTED" ]; then
-            THEME="$SELECTED"
-            SIZE=$(rofi -dmenu -p "Cursor Size" -theme-str 'listview {lines: 0;}')
-            if [ -n "$SIZE" ]; then
-                export XCURSOR_THEME="$THEME"
-                export XCURSOR_SIZE="$SIZE"
-                hyprctl setcursor $XCURSOR_THEME $XCURSOR_SIZE
-                mkdir -p ~/.icons/default
-                echo "[Icon Theme]" > ~/.icons/default/index.theme
-                echo "Inherits=$XCURSOR_THEME" >> ~/.icons/default/index.theme
-            fi
-        fi
-      '')
 
 
 
@@ -245,7 +232,7 @@ in
         "$fileManager" = "thunar";
         "$browser" = "brave";
         "$menu" = "rofi -show drun -show-icons";
-
+        "$menu2" = "rofi -modes combi,window -show combi -combi-modes run,drun";
         input = {
           follow_mouse = 1;
 
@@ -464,6 +451,7 @@ in
           "$mainMod, E, exec, $fileManager"
           "$mainMod, T, togglefloating,"
           "$mainMod, D, exec, $menu"
+          "$mainMod SHIFT, D, exec, $menu2"
           "$mainMod, P, pseudo," # dwindle
           "$mainMod, J, togglesplit," # dwindle
 
@@ -535,13 +523,12 @@ in
           
           # game mode is super fun
           "$mainMod, F1, exec, toggle-gamemode"
-          
-          # power menu
-          #"$mainMod SHIFT, Q, exec, rofi -show p -modi p:rofi-power-menu"
-          "$mainMod SHIFT, Q, exec, wlogout"
+          # toggle the internal display 
+          "$mainMod, F2, exec, toggle-display"
 
-          # display key
-          "$mainMod, 235, exec, toggle-display"
+          "$mainMod, XF86LaunchA, exec, $(cd ~/Pictures/;wallpaper-select)"  # Apple Magic Keyboard f3 
+          # power menu
+          "$mainMod SHIFT, Q, exec, wlogout"
         ];
 
         bindl = [
