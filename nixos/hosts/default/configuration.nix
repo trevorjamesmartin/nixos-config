@@ -194,16 +194,23 @@
     ];
   };
 
-  home-manager = {
-    backupFileExtension = "backup";
-    # also pass inputs to home-manager modules
-    extraSpecialArgs = { inherit inputs; };
 
-  };
+# home-manager = {
+#   backupFileExtension = "backup";
+#   # also pass inputs to home-manager modules
+#   extraSpecialArgs = { inherit inputs; };
+
+# };
 
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "joypixels"
+    ];
+  nixpkgs.config.joypixels.acceptLicense = true;
+
   nixpkgs.config.vivaldi = {
       proprietaryCodecs = true;
       enableWideVine = true;
@@ -380,6 +387,7 @@
     # audio (pipewire) controls
     pavucontrol
 
+    joypixels
   ];
 
 
@@ -442,10 +450,12 @@
   programs.zsh.shellAliases = {
     neofetch = "fastfetch -c neofetch";
     TerminalEmulator = "foot";
+    Hyprland = "Hyprland > /tmp/hyprexitwithgrace.log 2>&1";
   };
 
   programs.bash.shellAliases = {
     neofetch = "fastfetch -c neofetch";
+    Hyprland = "Hyprland > /tmp/hyprexitwithgrace.log 2>&1";
   };
 
  # Some programs need SUID wrappers, can be configured further or are
@@ -483,7 +493,8 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk
-      noto-fonts-emoji
+      #noto-fonts-emoji
+      joypixels
       liberation_ttf
       fira-code
       fira-code-symbols

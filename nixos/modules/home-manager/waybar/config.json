@@ -34,6 +34,7 @@
 
         "clock",
         "custom/separator",
+        "custom/weather",
         "pulseaudio",
 
         "tray"
@@ -251,9 +252,16 @@
     },
     "custom/wallpaper": {
         "format": "{icon}",
-        "format-icons": "🖵 ",
+        "format-icons": "🏞️",
         "on-click": "$(cd ~/Pictures/;wallpaper-select)",
-        "tooltip": "Desktop Wallpaper"
+        "tooltip": false 
+    },
+    "custom/weather": {
+        "exec": "wttrbar --fahrenheit",
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "interval": 3600
     },
 }
 

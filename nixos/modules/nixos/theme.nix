@@ -17,6 +17,7 @@ in
     catppuccin-qt5ct
     #catppuccin-cursors
     apple-cursor
+    whitesur-gtk-theme
     tmuxPlugins.catppuccin
     foot
   ];

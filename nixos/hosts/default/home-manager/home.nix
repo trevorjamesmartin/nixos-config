@@ -1,16 +1,14 @@
 { config, lib, inputs, pkgs, ... }:
 {
   imports = [
-    /etc/nixos/modules/home-manager/theme.nix
-    /etc/nixos/modules/home-manager/neovim
-    /etc/nixos/modules/home-manager/hyprland 
-
-    /etc/nixos/modules/home-manager/waybar
-    /etc/nixos/modules/home-manager/foot
-    /etc/nixos/modules/home-manager/kitty
-    /etc/nixos/modules/home-manager/conky
-    /etc/nixos/modules/home-manager/wlogout
-    /etc/nixos/modules/home-manager/user-scripts
+    ../../../modules/home-manager/neovim
+    ../../../modules/home-manager/hyprland
+    ../../../modules/home-manager/waybar
+    ../../../modules/home-manager/foot
+    ../../../modules/home-manager/kitty
+    ../../../modules/home-manager/conky
+    ../../../modules/home-manager/wlogout
+    ../../../modules/home-manager/user-scripts
   ];
 
   yoshizl = {
@@ -53,14 +51,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  nixpkgs.overlays = [
-     (self: super: {
-       discord = super.discord.overrideAttrs (
-         _: { src = builtins.fetchTarball https://discord.com/api/download?platform=linux&format=tar.gz; }
-       );
-     })
-  ];
-
   programs.brave = {
     enable = true;
     commandLineArgs = [
@@ -83,13 +73,10 @@
     htop
     ripgrep
     ripgrep-all
-    tree
-    cmatrix
     imagemagick
     gh
-    cava
 
-    # web browsers
+    # other web browsers
     google-chrome
     vivaldi
     chromium

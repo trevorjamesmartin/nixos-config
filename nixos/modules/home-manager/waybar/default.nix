@@ -6,10 +6,16 @@ in {
 
   config = mkIf cfg.enable {
 
-    home.packages = [
-        pkgs.waybar
+    home.packages = with pkgs; [
+        waybar
         # display media information in waybar
-        pkgs.waybar-mpris
+        waybar-mpris
+
+        # weather for waybar
+        wttrbar
+
+        cava # for waybar module
+
     ];
 
     home.file.".config/waybar/config.json".source = ./config.json;

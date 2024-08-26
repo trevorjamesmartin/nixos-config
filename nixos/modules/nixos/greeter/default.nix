@@ -23,9 +23,9 @@ in {
         
         GTK = {
           application_prefer_dark_theme = true;
-          cursor_theme_name = lib.mkForce "catppuccin-frappe-blue-cursors";
+          cursor_theme_name = lib.mkForce "macOS-BigSur";
           font_name = "Cantarell 16";
-          icon_theme_name = lib.mkForce "Papirus-Dark";
+          #icon_theme_name = lib.mkForce "Papirus-Dark";
           theme_name = lib.mkForce "catppuccin-frappe-blue-standard";
         };
 

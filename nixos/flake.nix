@@ -50,7 +50,12 @@
           catppuccin.nixosModules.catppuccin
           ./hosts/default/configuration.nix
 
-          inputs.home-manager.nixosModules.home-manager
+          inputs.home-manager.nixosModules.home-manager {
+            home-manager.extraSpecialArgs = { inherit inputs; inherit catppuccin; };
+            #home-manager.useGlobalPkgs = true; # setting this to true disables home-manager.$USER options
+            home-manager.useUserPackages = true;
+            home-manager.users.tm = import ./hosts/default/home-manager/home.nix;
+          }
         ];
       };
     };

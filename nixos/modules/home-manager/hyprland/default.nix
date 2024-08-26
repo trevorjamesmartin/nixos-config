@@ -102,9 +102,9 @@ in
       bottom
 
       #########
-      (pkgs.writeShellScriptBin "external-monitor-check" ''
-        if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
-      '')
+      #(pkgs.writeShellScriptBin "external-monitor-check" ''
+      #  if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
+      #'')
 
       (pkgs.writeShellScriptBin "toggle-gamemode" ''
         #!/usr/bin/env sh
@@ -129,19 +129,18 @@ in
       '')
 
       (pkgs.writeShellScriptBin "toggle-display" ''
-        if [[ $1 != "" ]]
-        then
-          primary=$1
-        else
-          primary=$(wlr-randr --json |jq -r ".[0]| .name");
+
+        if [[ $1 != "" ]]; then
+          mon=$1; 
+        else 
+          mon=$(hyprctl monitors all -j|jq '.[0]|.name'|xargs);
         fi
-
-        toggled=$(wlr-randr --json |jq ".[]| {name: .name, enabled: .enabled } | if .enabled == false then .name else empty end");
-
-        if [[ $toggled != "" ]] then
-          echo $toggled | xargs -I{} wlr-randr --output {} --on;
+        echo "toggle display: $primary";
+        toggled=$(hyprctl monitors all -j |jq '.[]| {name: .name, off: .disabled}|if .off then .name else empty end'|grep $mon|xargs);
+        if [[ $toggled == $mon ]] then
+          hyprctl keyword monitor "$mon, enable";
         else
-          wlr-randr --output $primary --off;
+          hyprctl keyword monitor "$mon, disable";
         fi
       '')
 
@@ -173,7 +172,7 @@ in
         
         monitor = [
           # position desktop monitors (when plugged in)
-          "eDP-1,1920x1080@60,0x0,1" # laptop screen
+          "eDP-1,preferred,auto,auto" # laptop screen
           "DP-2,2560x1440,1920x0,1"  # left monitor
           "HDMI-A-1,2560x1440,4480x0,1" # right monitor
           #",preferred,auto,1"        # everything else (includes laptop)
@@ -524,7 +523,7 @@ in
           # game mode is super fun
           "$mainMod, F1, exec, toggle-gamemode"
           # toggle the internal display 
-          "$mainMod, F2, exec, toggle-display"
+          ",XF86Messenger, exec, toggle-display" # laptop keyboard, fn+F9 (external display key)
 
           "$mainMod, XF86LaunchA, exec, $(cd ~/Pictures/;wallpaper-select)"  # Apple Magic Keyboard f3 
           # power menu
