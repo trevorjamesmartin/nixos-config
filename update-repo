@@ -5,8 +5,7 @@ destination=~/nixos-laptop-config
 # ensure folder exists
 mkdir -p $destination/nixos
 
-fcount=0
-
+# copy files to repo
 for f in $(ls /etc/nixos)
 do
         cp -rv /etc/nixos/$f $destination/nixos
