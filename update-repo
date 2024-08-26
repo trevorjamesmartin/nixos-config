@@ -9,12 +9,6 @@ fcount=0
 
 for f in $(ls /etc/nixos)
 do
-        echo "copying : /etc/nixos/$f"
-        cp -r /etc/nixos/$f $destination/nixos
-        fcount=$((fcount + 1)) 
+        cp -rv /etc/nixos/$f $destination/nixos
 done
-
-
-
-echo $fcount files copied to $destination
 
