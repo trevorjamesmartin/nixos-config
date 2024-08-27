@@ -110,13 +110,12 @@ in
         mon="eDP-1";
       fi
 
-      if [[ $(hyprctl monitors all -j|jq 'length') == 0 ]] ; then
-        hyprctl keyword monitor "$mon, enable";
-      else
+      if [[ $(hyprctl monitors all -j|jq 'length') > 1 ]] ; then
         hyprctl keyword monitor "$mon, disable";
+      else
+        hyprctl keyword monitor "$mon, enable";
       fi
 
-      # if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
       '')
 
       (pkgs.writeShellScriptBin "toggle-gamemode" ''
