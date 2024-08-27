@@ -414,6 +414,8 @@ in
         "$mainMod" = "SUPER";
 
         bind = [
+          "CONTROL ALT, DELETE, exec, hyprctl reload"
+
           "$mainMod, F, workspaceopt, allfloat"
 
           "$mainMod SHIFT, code:49, movetoworkspace, special:neovim"
