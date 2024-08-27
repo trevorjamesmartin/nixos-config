@@ -33,14 +33,12 @@ in
 
   environment.sessionVariables = {
     # I'm setting these environment variables for hyprcursor to use
-    #XCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
     XCURSOR_THEME = cursor_variant;
     
     XCURSOR_SIZE  = cursor_size;
     HYPRCURSOR_SIZE = cursor_size; 
     
     HYPRCURSOR_THEME = cursor_variant;
-    #HYPRCURSOR_THEME = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-cursors";
 
     # pretty 
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;

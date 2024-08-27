@@ -15,8 +15,8 @@
     waybar.enable = true;                 # (status bar)
 
     hyprland = {
-      enable = true;                      # Hyprland
-      hyprbars = true;                    # + (titlebars)
+      enable = true;                      # Hyprland configuration
+      hyprbars = false;                    # + (titlebars)
       hyprlock = true;                    # + (screen-lock)
       hypridle = true;                    # + (lock/suspend when idle)
       hyprpaper = true;                   # + (desktop wallpaper)
@@ -54,14 +54,7 @@
   programs.brave = {
     enable = true;
     commandLineArgs = [
-      "--enable-features=VaapiVideoDecodeLinuxGL"
-      "--use-gl=angle"
-      "--use-angle=gl"
       "--ozone-platform=wayland"
-      # to fix journal flood during video playback,
-      # disable (chrome://flags) 
-      #   "multi-plane formats for hardware video decoder"
-      #   "multi-plane formats for software video decoder"
     ];
   };
 
@@ -78,7 +71,6 @@
 
     # other web browsers
     google-chrome
-    vivaldi
     chromium
 
     # image editors
@@ -92,6 +84,7 @@
 
     # music
     spotify
+
   ];
 
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
