@@ -14,12 +14,14 @@
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/plymouth
+      ../../modules/nixos/hyprland
   ];
 
   yoshizl = {
     thunar.enable = true;
     plymouth.enable = true;
     greeter.enable = true;
+    hyprland.enable = true;
   };
 
   boot = {
@@ -122,16 +124,7 @@
     font = "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
   };
  
-  # Enable hyprland
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-  };
 
-  programs.hyprlock.enable = true;
-
-  services.hypridle.enable = true;
 
 
   # Configure keymap in X11
@@ -194,15 +187,6 @@
     ];
   };
 
-
-# home-manager = {
-#   backupFileExtension = "backup";
-#   # also pass inputs to home-manager modules
-#   extraSpecialArgs = { inherit inputs; };
-
-# };
-
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreePredicate = pkg:
@@ -230,16 +214,11 @@
     antimicroX
     gkrellm
     
-    plymouth-matrix-theme
     gsettings-desktop-schemas
     gsettings-qt
-    libsForQt5.polkit-kde-agent
     
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     lua
-    #(lua.withPackages(ps: with ps;[ busted luafilesystem ]))
 
-    # neofetch
     fastfetch
 
     # development
@@ -269,13 +248,8 @@
     catppuccin-gtk
     catppuccin-qt5ct
     catppuccin-cursors.frappeBlue
-
-#   # Add global theme
-    #paper-icon-theme
-    papirus-icon-theme
     
     # Adds a package defining a default icon/cursor theme.
-
     unzip
     wget
 
@@ -290,17 +264,6 @@
     google-chrome
     
     swww
-
-    # QT libs
-    libsForQt5.qt5.qtgraphicaleffects
-    libsForQt5.qt5.qtsvg
-    libsForQt5.qt5ct
-    libsForQt5.qtstyleplugin-kvantum
-    libsForQt5.lightly
-    libsForQt5.qt5.qtwayland
-    kdePackages.qtwayland # qt6
-    qt6Packages.qt6ct
-    qt6.qtwayland
     
     # cursors
     bibata-cursors-translucent  
@@ -328,26 +291,12 @@
     protonup
     lutris
     heroic
-    #gogdl
-
-    # extra wine containers 
-    #bottles
-
-    # kwalllet & friends
-    kdePackages.kwallet
-    libsForQt5.kwallet
-    kdePackages.kwalletmanager
-    libsForQt5.kwalletmanager
-    kdePackages.ksshaskpass
-    kdePackages.kwallet-pam
-    libsForQt5.kwallet-pam
     
     # tool to package desktop applications as AppImages
     appimagekit
 
     # run unpatched dynamic binaries on NixOS
     nix-ld
-    
 
     # a program to show the type of file
     file
@@ -359,11 +308,6 @@
     # Debian package manager
     dpkg
 
-    # wayland / hyprland
-    wayland-protocols
-    wayland-scanner
-    hyprwayland-scanner
-    
     # cli tool for interacting with window manager
     wmctrl
     
@@ -382,7 +326,6 @@
     bluez
     bluez-tools
     libinput
-
   
     # audio (pipewire) controls
     pavucontrol
@@ -473,7 +416,7 @@
 
   security.sudo.enable = true;
 
-  programs.sway.enable = true;
+  programs.sway.enable = false;
 
   programs.dconf = {
     enable = true;
@@ -552,7 +495,6 @@
   };
 
   users.groups.netdev.members = [ "nm-openconnect" ];
-
 
   services.fprintd = {
     enable = false; # not building atm
