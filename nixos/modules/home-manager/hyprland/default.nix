@@ -102,9 +102,22 @@ in
       bottom
 
       #########
-      #(pkgs.writeShellScriptBin "external-monitor-check" ''
-      #  if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
-      #'')
+      (pkgs.writeShellScriptBin "external-monitor-check" ''
+      
+      if [[ $1 != "" ]] ; then
+        mon=$1;
+      else
+        mon="eDP-1";
+      fi
+
+      if [[ $(hyprctl monitors all -j|jq 'length') == 0 ]] ; then
+        hyprctl keyword monitor "$mon, enable";
+      else
+        hyprctl keyword monitor "$mon, disable";
+      fi
+
+      # if [[ $(wlr-randr --json |jq length) -gt 1 ]] then wlr-randr --output "eDP-1" --off; else wlr-randr --output "eDP-1" --on; fi
+      '')
 
       (pkgs.writeShellScriptBin "toggle-gamemode" ''
         #!/usr/bin/env sh
@@ -149,10 +162,6 @@ in
         hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
         hyprctl dispatch exit
       '')
-
-
-
-
     ];
 
     wayland.windowManager.hyprland = {
@@ -212,11 +221,6 @@ in
         ];
 
         exec = [
-          # check the external monitor situation
-          "external-monitor-check"
-          # "~/.config/hypr/scripts/external.sh"
-          # reload home-manager session variables
-          # ". ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
           # waybar
           "pidof waybar && pidof waybar|xargs kill -9 -- ;waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css"
           # conky
@@ -224,6 +228,9 @@ in
 
           # set the cursor theme
           "hyprctl setcursor $XCURSOR_THEME $XCURSOR_SIZE"
+          
+          # check the external monitor situation
+          "sleep 3 && external-monitor-check"
         ];
 
         # Set programs that you use
