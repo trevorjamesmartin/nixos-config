@@ -3,21 +3,24 @@ with lib;
 let cfg = config.yoshizl.thunar;
 in {
   options.yoshizl.thunar.enable = mkEnableOption "enable Thunar";
+  options.yoshizl.thunar.removeWallpaper = mkEnableOption "remove 'Set Wallpaper' plugin for replacement with 'custom action...'";
 
   config = mkIf cfg.enable {
-
-    nixpkgs.overlays = [
-      #   'eliminate the errant menu entry', 
-      # see https://forum.xfce.org/viewtopic.php?pid=48958#p48958
-      (final: prev: {
-        thunar = prev.xfce.thunar.overrideAttrs(oldAttrs: rec {
-          postFixup = ''
-             rm $out/lib/thunarx-3/thunar-wallpaper-plugin.so 
-             rm $out/lib/thunarx-3/thunar-wallpaper-plugin.la 
-          '';
-        });
-      })
-    ];
+    
+    nixpkgs.overlays = 
+      mkIf cfg.removeWallpaper
+      [
+        #   'eliminate the errant menu entry', 
+        # see https://forum.xfce.org/viewtopic.php?pid=48958#p48958
+        (final: prev: {
+          thunar = prev.xfce.thunar.overrideAttrs(oldAttrs: rec {
+            postFixup = ''
+               rm $out/lib/thunarx-3/thunar-wallpaper-plugin.so 
+               rm $out/lib/thunarx-3/thunar-wallpaper-plugin.la 
+            '';
+          });
+        })
+      ];
     programs.thunar.plugins = with pkgs.xfce; [
       thunar-archive-plugin
       thunar-volman
