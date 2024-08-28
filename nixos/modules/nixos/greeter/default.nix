@@ -4,6 +4,7 @@ let cfg = config.yoshizl.greeter;
 in {
 
   options.yoshizl.greeter.enable = mkEnableOption "enable greeter settings";
+  options.yoshizl.greeter.dark_mode = mkEnableOption "dark mode";
 
   config = mkIf cfg.enable {
 
@@ -22,7 +23,7 @@ in {
         };
         
         GTK = {
-          application_prefer_dark_theme = true;
+          application_prefer_dark_theme = cfg.dark_mode;
           cursor_theme_name = lib.mkForce "macOS-BigSur";
           font_name = "Cantarell 16";
           #icon_theme_name = lib.mkForce "Papirus-Dark";
