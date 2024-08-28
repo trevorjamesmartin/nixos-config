@@ -4,7 +4,7 @@ let
   cfg = config.yoshizl.hyprland;    
 in
 {
-  options.yoshizl.hyprland.enable = mkEnableOption "yoshizl Hyprland session";
+  options.yoshizl.hyprland.enable = mkEnableOption "Hyprland session w/ kwallet support";
   
   config = mkIf cfg.enable {
       # Enable hyprland
@@ -59,6 +59,25 @@ in
           '';
         }
       ];
+
+      environment.sessionVariables = {
+        # tells electron apps to prefer wayland
+        NIXOS_OZONE_WL = "1";
+        GDK_BACKEND = "wayland,x11";
+        QT_QPA_PLATFORM = "wayland;xcb";
+        SDL_VIDEODRIVER = "wayland";
+        CLUTTER_BACKEND = "wayland";
+        MOZ_ENABLE_WAYLAND = "1";
+
+        #QT_QPA_PLATFORMTHEME = "qt5ct";
+      };
+
+      # enable wallet support
+      security.pam.services.greetd.enableKwallet = true;
+      security.pam.services.kwallet = {
+        name = "kwallet";
+        enableKwallet = true;
+      };
 
   };
 
