@@ -6,4 +6,10 @@
       config = "config /home/tm/ovpn/current";
     };
   };
+  environment.systemPackages = with pkgs; [
+    # vpn tools
+    wireguard-tools
+    openvpn
+  ];
+
 }

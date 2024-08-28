@@ -17,6 +17,9 @@ in
     };
   };
 
+  environment.variables.XDG_RUNTIME_DIR = "/run/user/$UID"; # set the runtime directory
+  
+  # /etc/xdg/
   environment.etc = {
     "xdg/Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini {}).generate "kvantum.kvconfig" {
       General.theme = "Catppuccin-Frappe-Blue";

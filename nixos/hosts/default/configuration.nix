@@ -9,19 +9,30 @@
       ./hardware-configuration.nix
       ./xdg.nix
       ../../cachix.nix
-      ../../modules/nixos/theme.nix
       ./vpn.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/plymouth
       ../../modules/nixos/hyprland
+
+      ../../modules/nixos/theme
+      ../../modules/nixos/gaming
   ];
 
   yoshizl = {
-    thunar.enable = true;
-    plymouth.enable = true;
-    greeter.enable = true;
-    hyprland.enable = true;
+    plymouth.enable = true;   # graphical boot screen
+    theme.enable = true;      # system theme
+    greeter = { 
+      enable = true;          # login screen
+      dark_mode = true;       # prefer_dark_theme ?
+    };
+    thunar = {
+      enable = true;     # installs Thunar file manager
+      removeWallpaper = true;
+    };
+    hyprland.enable = true;   # install Hyprland with kwallet
+
+    gaming.enable = true; # play some games
   };
 
   boot = {
@@ -48,9 +59,8 @@
     kernel.sysctl = { "vm.swappiness" = 10;};
   };
 
-
-  
-  # enale opengl options that help with gaming
+ 
+  # enable opengl options that help with gaming
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -91,28 +101,8 @@
     LC_TIME = "en_US.UTF-8";
   };
   
-  services.xserver.enable=true;
-
   services.xserver = {
-    
-    # Enable the GNOME Desktop Environment.
-    displayManager = {
-      gdm = {
-        enable = false;
-      };
-
-      lightdm = {
-        enable = false;
-      };
-
-    };
-
-    desktopManager = {
-      gnome = {
-        enable = false;
-      };
-    };
-
+    enable=true;
     excludePackages = [ pkgs.xterm ];
   };
 
@@ -123,9 +113,6 @@
     earlySetup = true;
     font = "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
   };
- 
-
-
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
@@ -164,15 +151,6 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
-  
-  environment.variables.XDG_RUNTIME_DIR = "/run/user/$UID"; # set the runtime directory
-
-  # enable wallet support
-  security.pam.services.greetd.enableKwallet = true;
-  security.pam.services.kwallet = {
-    name = "kwallet";
-    enableKwallet = true;
-  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tm = {
@@ -189,36 +167,16 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "joypixels"
-    ];
-  nixpkgs.config.joypixels.acceptLicense = true;
 
   nixpkgs.config.vivaldi = {
       proprietaryCodecs = true;
       enableWideVine = true;
   };
 
-  nixpkgs.config.packageOverrides = pkgs: { 
-    kodi-wayland = pkgs.kodi-wayland.override { 
-      joystickSupport = true;
-    };
-  };
-
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    thunar # for the overlay to take effect, thunar has to be listed
-    antimicroX
-    gkrellm
-    
-    gsettings-desktop-schemas
-    gsettings-qt
-    
-    lua
-
     fastfetch
 
     # development
@@ -231,6 +189,7 @@
     meson
     cpio
     ninja
+    lua
 
     # media keys
     playerctl
@@ -240,57 +199,24 @@
 
     # glib library
     glib.dev
+    
     # Multi-platform library for creating OpenGL contexts and managing input, including keyboard, mouse, joystick and time
     glfw
     
-    # theme
-    catppuccin
-    catppuccin-gtk
-    catppuccin-qt5ct
-    catppuccin-cursors.frappeBlue
-    
-    # Adds a package defining a default icon/cursor theme.
+    foot
+
     unzip
     wget
-
-    mesa
-    mesa-demos
-    
-    libdrm
-    libGL.dev
-
     udev-gothic-nf
 
-    google-chrome
-    
-    swww
-    
-    # cursors
-    bibata-cursors-translucent  
-    bibata-cursors
-    catppuccin
-    catppuccin-cursors
-    
     # internet messenger
     telegram-desktop
 
     # shell enhancements
     zsh-powerlevel10k
 
-    # vpn tools
-    wireguard-tools
-    openvpn
-
     nix-direnv
     home-manager
-    
-    # games
-    steam
-    steam-run
-    mangohud
-    protonup
-    lutris
-    heroic
     
     # tool to package desktop applications as AppImages
     appimagekit
@@ -330,35 +256,11 @@
     # audio (pipewire) controls
     pavucontrol
 
-    joypixels
   ];
-
-
-
-
-  environment.sessionVariables = {
-    #XDG_RUNTIME_DIR = "/run/user/$(id -u)";
-    STEAM_EXTRA_COMPAT_TOOLS_PATH =
-      "/home/tm/.steam/root/compatibilitytools.d";
-
-
-    # tells electron apps to prefer wayland
-    NIXOS_OZONE_WL = "1";
-    GDK_BACKEND = "wayland,x11";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    SDL_VIDEODRIVER = "wayland";
-    CLUTTER_BACKEND = "wayland";
-    MOZ_ENABLE_WAYLAND = "1";
-
-    #QT_QPA_PLATFORMTHEME = "qt5ct";
-  };
-
-  programs.gamemode.enable = true;
 
   programs.fuse.userAllowOther = true;
 
   programs.nix-ld.enable = true;
-
   programs.nix-ld.libraries = with pkgs; [
     # Add any missing dynamic libraries for unpackaged programs
     # here, NOT in environment.systemPackages
@@ -366,16 +268,6 @@
   ];
   
   #services.flatpak.enable = true;
-
-  programs.steam = {
-    enable = true;
-    gamescopeSession = {
-      enable = true;
-    };
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-  };
-
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
@@ -401,7 +293,7 @@
     Hyprland = "Hyprland > /tmp/hyprexitwithgrace.log 2>&1";
   };
 
- # Some programs need SUID wrappers, can be configured further or are
+  # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
   programs.gnupg.agent = {
@@ -416,83 +308,24 @@
 
   security.sudo.enable = true;
 
-  programs.sway.enable = false;
-
-  programs.dconf = {
-    enable = true;
-    profiles = {
-      user.databases = [{
-        settings = with lib.gvariant; {
-          # to remove titlebar buttons from Gnome apps:
-          "org/gnome/desktop/wm/preferences.button-layout".value = "";
-          "org/gnome/desktop/interface.cursor-size".value = mkInt32 64;
-        };
-      }];
-    };
-  };
-
-  fonts = {
-
-    packages = with pkgs; [
-      noto-fonts
-      noto-fonts-cjk
-      #noto-fonts-emoji
-      joypixels
-      liberation_ttf
-      fira-code
-      fira-code-symbols
-      mplus-outline-fonts.githubRelease
-      dina-font
-      proggyfonts
-      gyre-fonts
-      powerline-fonts
-      powerline-symbols
-      xkcd-font
-      udev-gothic-nf
-      nerdfonts
-      font-awesome
-      helvetica-neue-lt-std
-    ];
-    fontconfig = {
-      localConf = ''
-        <!-- use a less horrible font substition for pdfs such as https://www.bkent.net/Doc/mdarchiv.pdf -->
-        <match target="pattern">
-          <test qual="any" name="family"><string>NewCenturySchlbk</string></test>
-          <edit name="family" mode="assign" binding="same"><string>TeX Gyre Schola</string></edit>
-        </match>
-      '';
-      defaultFonts = {
-        serif = [  "Liberation Serif" ];
-        sansSerif = [ "Ubuntu" ];
-        monospace = [ "Ubuntu Mono" ];
-      };
-    };
-  };
-
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-    # Enable NAT
+  # Enable NAT
   networking.nat = {
     enable = true;
     enableIPv6 = true;
     #externalInterface = "eth0";
     internalInterfaces = [ "wg0" ];
   };
+  
   networking.firewall = {
     checkReversePath = "loose";
     allowedTCPPorts = [ 53 3333 50001 ];
     allowedUDPPorts = [ 53 51820 4444 5567 ];
-    # plex
-    #allowedTCPPorts = [ 3005 8324 32469 80 443 ];
-    #allowedUDPPorts = [ 1900 5353 32410 32412 32413 32414 ];
   };
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
   users.groups.netdev.members = [ "nm-openconnect" ];
 
@@ -500,11 +333,12 @@
     enable = false; # not building atm
   };
 
+  # show battery percentages
   services.upower = {
     enable = true;
   };
 
-
+  # for more information: `man powerprofilesctl`
   services.power-profiles-daemon = {
     enable = true;
   };
