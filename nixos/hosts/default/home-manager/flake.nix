@@ -13,6 +13,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    conky.url = "github:brndnmtthws/conky";
   };
 
   outputs = inputs @ { 
@@ -28,7 +29,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       homeConfigurations."tm" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+        inherit pkgs; inherit inputs;
         # Optionally use extraSpecialArgs to pass through arguments to home.nix       
         extraSpecialArgs = { inherit inputs; };
         # Specify your home configuration modules here, for example,
