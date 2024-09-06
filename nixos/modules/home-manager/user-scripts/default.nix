@@ -64,6 +64,10 @@ in {
         hyprctl dispatch tagwindow -- -nix
       '')
 
+      (pkgs.writeShellScriptBin "infowars" ''
+        mpv "https://rumble.com/v523y8c-infowars-network-feed-live-247.html";
+      '')
+
     ];
 
   };
