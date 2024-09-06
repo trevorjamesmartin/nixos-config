@@ -6,7 +6,7 @@
     ../../../modules/home-manager/waybar
     ../../../modules/home-manager/foot
     ../../../modules/home-manager/kitty
-    ../../../modules/home-manager/conky
+    ../../../modules/home-manager/conky 
     ../../../modules/home-manager/wlogout
     ../../../modules/home-manager/user-scripts
   ];
@@ -29,6 +29,7 @@
     kitty.enable = false;                 # (terminal emulator)
 
     conky.enable = true;                  # lightweight system monitor
+
     neovim.enable = true;                 # code editor
     wlogout.enable = true;                # logout menu
 
@@ -61,7 +62,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-
     # terminal apps
     htop
     ripgrep
