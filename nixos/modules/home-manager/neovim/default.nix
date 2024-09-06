@@ -8,8 +8,19 @@ in {
     
     home.sessionVariables.EDITOR = "nvim";
 
-    home.packages = [
-      pkgs.neovim
+   programs.neovim.plugins = [
+     pkgs.vimPlugins.nvim-treesitter.withAllGrammars
+   ];
+    home.packages = with pkgs; [
+      gcc
+
+      nodejs
+
+      tree-sitter
+
+      lua
+      neovim
+
 
       (pkgs.writeShellScriptBin "my-neovim" ''
         pushd ~/.config
