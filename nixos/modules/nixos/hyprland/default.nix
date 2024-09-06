@@ -68,6 +68,7 @@ in
         SDL_VIDEODRIVER = "wayland";
         CLUTTER_BACKEND = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
+        DESKTOP_SESSION = "hyprland";
 
         #QT_QPA_PLATFORMTHEME = "qt5ct";
       };
