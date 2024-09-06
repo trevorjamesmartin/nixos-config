@@ -173,6 +173,18 @@
       enableWideVine = true;
   };
 
+  programs.git.config = {
+    defaultBranch = "main";
+    url = {
+      "https://github.com/" = {
+        insteadOf = [
+          "gh:"
+          "github:"
+        ];
+      };
+    };
+  };
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
