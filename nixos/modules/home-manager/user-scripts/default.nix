@@ -3,6 +3,7 @@ with lib;
 let 
   cfg = config.yoshizl.user-scripts;
   hm_hq = "/etc/nixos/hosts/default/home-manager";
+  flake_host = "nixos";
 in {
   options.yoshizl.user-scripts.enable = mkEnableOption "enable user-scripts";
 
@@ -42,7 +43,7 @@ in {
       (pkgs.writeShellScriptBin "${config.home.username}-system-switch" ''
         hyprctl dispatch tagwindow +nix
         echo "[nixos-rebuild switch]"
-        sudo nixos-rebuild switch --flake /etc/nixos#default --show-trace
+        sudo nixos-rebuild switch --flake /etc/nixos#${flake_host} --show-trace
         echo "[home-manager switch]"
         home-manager -f ${hm_hq}/home.nix switch
         hyprctl dispatch tagwindow -- -nix
