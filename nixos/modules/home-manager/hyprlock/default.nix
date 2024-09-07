@@ -42,6 +42,10 @@ in {
         halign = center
         valign = center
     }
+
+    misc {
+        allow_session_lock_restore = true 
+    }
     '';
 
     home.file.".config/hypr/lockscreen.jpg".source = ./lockscreen.jpg;
