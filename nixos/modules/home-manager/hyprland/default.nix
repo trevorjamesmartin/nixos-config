@@ -21,6 +21,7 @@ in
     hyprland.hyprlock = mkEnableOption "- include hyprlock";
     hyprland.hypridle = mkEnableOption "- include hypridle";
     hyprland.hyprpaper = mkEnableOption "- include hyprpaper";
+    hyprland.swww = mkEnableOption "- swww for wallpaper";
 
     hyprland.rofi = mkEnableOption "- w/ rofi";
 
@@ -54,12 +55,19 @@ in
     ];
 
     home.packages = with pkgs;[
+      (mkIf cfg.swww
+        swww
+      )
       # wayland colorpicker
       hyprpicker
       # Hyprland plugins
       hyprcursor
-      hyprpaper
-      hyprlock
+      
+      (mkIf cfg.hyprpaper
+        hyprpaper)
+
+      (mkIf cfg.hyprlock
+        hyprlock)
 
       libnotify # notify-send
       dunst     # notifications
@@ -210,9 +218,16 @@ in
 
         exec-once = [
           # load the essentials
-          "hyprpaper &" # wallpaper agent
+          (mkIf cfg.swww
+            "swww-daemon &")
+
+          (mkIf cfg.hyprpaper
+            "hyprpaper &")
+
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
-          "hyprlock" # lock screen
+
+          (mkIf cfg.hyprlock
+            "hyprlock") # lock screen
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
@@ -391,6 +406,8 @@ in
           "opacity 1.0:override,class:^(occulant)$"
           "opacity 1.0:override,class:^(mpv)$"
           "opacity 1.0:override,class:^(Kodi)$"
+          "opacity 1.0:override,initialClass:^(retroarch)$"
+
           "minsize 320 240,class:^(mpv)$"
 
           "tag +music, initialTitle:(Spotify)"    # add dynamic tag `music*` to spotify window
@@ -430,7 +447,7 @@ in
           "$mainMod SHIFT, Minus, exec, hyprpicker -a"
           
           # overview
-          (mkIf config.yoshizl.hyprland.hyprexpo
+          (mkIf cfg.hyprexpo
           "$mainMod, Tab, hyprexpo:expo, toggle")
 
           # lock screen
