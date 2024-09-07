@@ -12,6 +12,7 @@ in
         enable = true;
         xwayland.enable = true;
         package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+        portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       };
 
       programs.hyprlock.enable = true;
@@ -19,11 +20,6 @@ in
       services.hypridle.enable = true;
       
       environment.systemPackages = with pkgs; [
-        # wayland / hyprland
-        wayland-protocols
-        wayland-scanner
-        hyprwayland-scanner
-
         # QT libs
         libsForQt5.qt5.qtgraphicaleffects
         libsForQt5.qt5.qtsvg
