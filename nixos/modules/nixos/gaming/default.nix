@@ -6,6 +6,12 @@ in {
   options.yoshizl.gaming.enable = mkEnableOption "play some video games";
 
   config = mkIf cfg.enable {
+    # enable opengl options that help with gaming
+    hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+
 
     environment.systemPackages = with pkgs; [
       # games
@@ -19,6 +25,10 @@ in {
       mesa-demos
       libdrm
       libGL.dev
+
+      retroarchFull
+      retroarch-assets
+      retroarch-joypad-autoconfig
     ];
 
     programs.gamemode.enable = true;
