@@ -18,7 +18,7 @@ in {
 
     boot.plymouth = {
       enable = true;
-      theme = "owl";
+      theme = lib.mkDefault "owl";
       themePackages = [
         pkgs.adi1090x-plymouth-themes 
       ];

@@ -42,19 +42,19 @@
     nixosConfigurations = {
       home-manager.extraSpecialArgs = { inherit inputs; };
 
-      nixos = nixpkgs.lib.nixosSystem {
+      default = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
 
         modules = with self.nixosModules; [ 
 
           catppuccin.nixosModules.catppuccin
-          ./hosts/desktop/configuration.nix
+          ./hosts/default/configuration.nix
 
           inputs.home-manager.nixosModules.home-manager {
             home-manager.extraSpecialArgs = { inherit inputs; };
             #home-manager.useGlobalPkgs = true; # setting this to true disables home-manager.$USER options
             home-manager.useUserPackages = true;
-            home-manager.users.tm = import ./hosts/desktop/home-manager/home.nix ;
+            home-manager.users.tm = import ./hosts/default/home-manager/home.nix;
           }
         ];
       };

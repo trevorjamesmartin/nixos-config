@@ -8,7 +8,7 @@
     ../../../modules/home-manager/kitty
     ../../../modules/home-manager/conky 
     ../../../modules/home-manager/wlogout
-    ../../../modules/home-manager/user-scripts
+    (import ../../../modules/home-manager/user-scripts { hm_hq="/etc/nixos/hosts/default/home-manager"; hm_hostname="default"; })
   ];
 
   yoshizl = {
@@ -62,6 +62,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    xarchiver
     # terminal apps
     htop
     ripgrep
