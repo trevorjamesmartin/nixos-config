@@ -41,13 +41,6 @@
           ./home.nix
         ];
         
-#         catppuccin.homeManagerModules.catppuccin
-        catppuccin = {
-          enable = true;
-          flavour = "frappe";
-          accent = "blue";
-        };
-
       };
     };
 }
