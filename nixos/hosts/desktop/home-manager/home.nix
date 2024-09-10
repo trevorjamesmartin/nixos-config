@@ -1,14 +1,4 @@
 { config, lib, pkgs, ...}: 
-let 
-  # edit catppuccin here
-  catppuccin_flavor = "frappe";
-  catppuccin_accent = "blue";
-  #catppuccin_kvantum_theme = "Catppuccin-Frappe-Blue";
-  # todo: check how we build these names
-  catppuccin_name = "catppuccin-${catppuccin_flavor}-${catppuccin_accent}-standard+default";
-  cursor_theme = "macOS";
-  cursor_size = 48;
-in 
 {
   imports = [
     ../../../modules/home-manager/neovim
@@ -18,7 +8,9 @@ in
     ../../../modules/home-manager/kitty
     ../../../modules/home-manager/conky
     ../../../modules/home-manager/wlogout
-    ../../../modules/home-manager/user-scripts
+    
+    (import ../../../modules/home-manager/user-scripts { hm_hq="/etc/nixos/hosts/desktop/home-manager"; hm_hostname="nixos"; })
+
   ];
 
   yoshizl = {
@@ -108,6 +100,7 @@ in
   # environment.
   home.packages = with pkgs; [
     #oh-my-zsh
+    xarchiver
 
     # terminal apps
     htop

@@ -3,27 +3,60 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, ... }:
+let
+  theme_flavor = "mocha"; # {mocha,frappe,macchiato,latte}
+  theme_accent = "teal"; #{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender} 
+  # [--tweaks {black,rimless,normal,float} [{black,rimless,normal,float} ...]]
+  kvantum_theme = "Catppuccin-Mocha-Teal";
+in
 
 {
+
+  catppuccin = {
+    enable = true;
+    flavor = theme_flavor;
+    accent = theme_accent;
+  };
+
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./xdg.nix
+      ./vpn.nix
       ../../cachix.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/hyprland
 
-      ../../modules/nixos/theme
+      (import ../../modules/nixos/theme {
+          gtk_theme="catppuccin-${theme_flavor}-${theme_accent}-standard";
+          kvantum_theme = "${kvantum_theme}";
+          gtk-icon_theme="Papirus";
+      })
+      
       ../../modules/nixos/gaming
-    ];
-
+  ];
+  
   nixpkgs.overlays = [
     (final: prev: {
       adi1090x-plymouth-themes = prev.adi1090x-plymouth-themes.overrideAttrs(oldAttrs: rec {
         selected_themes = [ "hexa_retro" ];
       });
     })
+    
+    # build catppuccin-gtk with specified flavor-accent 
+    (final: prev: {
+      catppuccin-gtk = prev.catppuccin-gtk.overrideAttrs(oldAttrs: rec {
+        installPhase = ''
+        runHook preInstall
+        mkdir -p $out/share/themes
+        python3 build.py ${theme_flavor} --accent ${theme_accent} --size standard --dest $out/share/themes
+        runHook postInstall
+        '';
+      });
+    })
+
   ];
   
 
@@ -36,7 +69,6 @@
     thunar = {
       enable = true;          # installs Thunar file manager
       removeWallpaper = true;
-      #./vpn.nix
     };
     hyprland.enable = true;   # install Hyprland with kwallet
 
@@ -51,7 +83,7 @@
   # quiet boot
   boot.consoleLogLevel = 0;
   boot.initrd.verbose = false;
-  boot.kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
+  boot.kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" "ipv6.disable=1" ];
 
   # boot loader
   boot.loader.systemd-boot.enable = true;
@@ -286,7 +318,7 @@
   # Enable NAT
   networking.nat = {
     enable = true;
-    enableIPv6 = true;
+    enableIPv6 = false;
     #externalInterface = "eth0";
     internalInterfaces = [ "wg0" ];
   };

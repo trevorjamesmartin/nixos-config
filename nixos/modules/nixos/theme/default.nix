@@ -1,16 +1,8 @@
-{lib, config, pkgs, ...}:
+{ gtk_theme ? "Adwaita:dark", kvantum_theme ? "Catppuccin-Frappe-Blue", cursor_theme ? "macOS", cursor_size ? "32", gtk-icon_theme ? "Papirus", ... }:
+{ lib, config, pkgs, ... }:
 with lib;
 let 
   cfg = config.yoshizl.theme;
-  # edit catppuccin here
-  catppuccin_flavor = "frappe";
-  catppuccin_accent = "blue";
-  catppuccin_dpi    = "standard"; # "xhdpi" "hdpi" "standard"; 
-  catppuccin_kvantum_theme = "Catppuccin-Frappe-Blue";
-  cursor_theme = "macOS";
-  cursor_size = "32";
-  gtk_theme="catppuccin-${catppuccin_flavor}-${catppuccin_accent}-${catppuccin_dpi}";
-  gtk-icon_theme="Papirus";
 in 
   {
   options.yoshizl.theme.enable = mkEnableOption "enable system theme";
@@ -29,12 +21,7 @@ in
 
     qt.platformTheme = "qt5ct";
     qt.style = "kvantum";
-    # general settings
-    catppuccin = {
-      enable = true;
-      flavor = "${catppuccin_flavor}";
-      accent = "${catppuccin_accent}";
-    };
+
 
     environment.sessionVariables = {
       # I'm setting these environment variables for hyprcursor to use
@@ -56,7 +43,7 @@ in
     # /etc/xdg/
     environment.etc = {
       "xdg/Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini {}).generate "kvantum.kvconfig" {
-        General.theme = "${catppuccin_kvantum_theme}";
+        General.theme = "${kvantum_theme}";
       };
       
       "xdg/gtk-4.0".source = "${pkgs.catppuccin-gtk}/share/themes/${gtk_theme}/gtk-4.0";
