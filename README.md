@@ -1,4 +1,4 @@
-# nixos-laptop-config
+# nixos-config
 
 
 [`/etc/nixos`](./nixos/)

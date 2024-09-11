@@ -1,6 +1,6 @@
 #!/bin/sh
 
-destination=~/nixos-laptop-config
+destination=~/nixos-config
 
 # ensure folder exists
 mkdir -p $destination/nixos
