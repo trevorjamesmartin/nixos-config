@@ -9,7 +9,7 @@
     ../../../modules/home-manager/conky
     ../../../modules/home-manager/wlogout
     
-    (import ../../../modules/home-manager/user-scripts { hm_hq="/etc/nixos/hosts/desktop/home-manager"; hm_hostname="nixos"; })
+    (import ../../../modules/home-manager/user-scripts { hostName="desktop"; })
 
   ];
 
