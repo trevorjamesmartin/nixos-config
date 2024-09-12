@@ -3,11 +3,9 @@
   
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    #nixpkgs.url = "github:nixos/nixpkgs/24.05";
+    nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    #nixpkgs.url = "github:NixOS/nixpkgs/b79ce4c43f9117b2912e7dbc68ccae4539259dda";
-    nixpkgs.url = "github:NixOS/nixpkgs/574d1eac1c200690e27b8eb4e24887f8df7ac27c";
+    nixpkgs.url = "github:NixOS/nixpkgs/574d1eac1c200690e27b8eb4e24887f8df7ac27c"; # (2024-09-06)
 
     catppuccin.url = "github:catppuccin/nix";
 
@@ -19,6 +17,7 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,6 +41,7 @@
   {
     nixosConfigurations = {
       home-manager.extraSpecialArgs = { inherit inputs; };
+
       thinkpadt14s = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
 
@@ -52,9 +52,26 @@
 
           inputs.home-manager.nixosModules.home-manager {
             home-manager.extraSpecialArgs = { inherit inputs; };
-            #home-manager.useGlobalPkgs = true; # setting this to true disables home-manager.$USER options
+            home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
             home-manager.useUserPackages = true;
-            home-manager.users.tm = import ./hosts/thinkpadt14s/home-manager/home.nix;
+            home-manager.users.tm = import ./hosts/thinkpadt14s/home-manager/home.nix ;
+          }
+        ];
+      };
+
+      nixos = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+
+        modules = with self.nixosModules; [ 
+
+          catppuccin.nixosModules.catppuccin
+          ./hosts/desktop/configuration.nix
+
+          inputs.home-manager.nixosModules.home-manager {
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
+            home-manager.useUserPackages = true;
+            home-manager.users.tm = import ./hosts/desktop/home-manager/home.nix ;
           }
         ];
       };
