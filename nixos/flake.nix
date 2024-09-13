@@ -36,7 +36,8 @@
       ...
   }:
   let
-    hostname="desktop";
+    hostName="thinkpadt14s";
+    hostArch="x86_64-linux";
   in
   {
       homeConfigurations."tm" = home-manager.lib.homeManagerConfiguration {
@@ -47,17 +48,17 @@
         ];
       };
       nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+        ${hostName} = nixpkgs.lib.nixosSystem {
+          system = hostArch;
           specialArgs = { inherit inputs; };
           modules = [
             catppuccin.nixosModules.catppuccin
-            ./hosts/${hostname}/configuration.nix
+            ./hosts/${hostName}/configuration.nix
             inputs.home-manager.nixosModules.home-manager {
               home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
               home-manager.useUserPackages = true;
-              home-manager.users.tm = import ./hosts/${hostname}/home.nix ;
-              home-manager.extraSpecialArgs = {inherit inputs;};
+              home-manager.users.tm = import ./hosts/${hostName}/home.nix ;
+              home-manager.extraSpecialArgs = { inherit inputs; };
             }
           ];
         };
