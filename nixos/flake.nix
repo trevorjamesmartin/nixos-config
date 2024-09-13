@@ -1,12 +1,13 @@
 {
-  description = "Nixos configuration with flakes";
-  
+  description = "Nixos + Home-Manager, configuration with flakes";
+
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/574d1eac1c200690e27b8eb4e24887f8df7ac27c"; # (2024-09-06)
 
+    nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
+    
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    
     catppuccin.url = "github:catppuccin/nix";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
@@ -35,47 +36,31 @@
       ...
   }:
   let
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
+    hostname="desktop";
   in
   {
-    nixosConfigurations = {
-      home-manager.extraSpecialArgs = { inherit inputs; };
-
-      thinkpadt14s = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-
-        modules = with self.nixosModules; [ 
-
-          catppuccin.nixosModules.catppuccin
-          ./hosts/thinkpadt14s/configuration.nix
-
-          inputs.home-manager.nixosModules.home-manager {
-            home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
-            home-manager.useUserPackages = true;
-            home-manager.users.tm = import ./hosts/thinkpadt14s/home-manager/home.nix ;
-          }
+      homeConfigurations."tm" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        modules = [ 
+          inputs.hyprland.homeManagerModules.default
+          inputs.catppuccin.homeManagerModules.catppuccin
         ];
       };
-
-      desktop = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-
-        modules = with self.nixosModules; [ 
-
-          catppuccin.nixosModules.catppuccin
-          ./hosts/desktop/configuration.nix
-
-          inputs.home-manager.nixosModules.home-manager {
-            home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
-            home-manager.useUserPackages = true;
-            home-manager.users.tm = import ./hosts/desktop/home-manager/home.nix ;
-          }
-        ];
+      nixosConfigurations = {
+        desktop = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            catppuccin.nixosModules.catppuccin
+            ./hosts/${hostname}/configuration.nix
+            inputs.home-manager.nixosModules.home-manager {
+              home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
+              home-manager.useUserPackages = true;
+              home-manager.users.tm = import ./hosts/${hostname}/home.nix ;
+              home-manager.extraSpecialArgs = {inherit inputs;};
+            }
+          ];
+        };
       };
-
-    };
   };
 }

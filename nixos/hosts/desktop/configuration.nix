@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   theme_flavor = "mocha"; # {mocha,frappe,macchiato,latte}
   theme_accent = "teal"; #{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender} 
@@ -23,7 +23,7 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./xdg.nix
-      ./vpn.nix
+      #./vpn.nix
       ../../cachix.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
@@ -94,6 +94,12 @@ in
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" "v4l2loopback" ];
 
+  # enable firmware updates
+  services.fwupd.enable = true;
+
+  # enable firmware
+  hardware.enableAllFirmware = true;
+
   # support for ntfs
   boot.supportedFilesystems = [ "ntfs" ];
 
@@ -143,6 +149,7 @@ in
     layout = "us";
     variant = "";
   };
+
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -229,7 +236,7 @@ in
     zsh-powerlevel10k
 
     nix-direnv
-    home-manager
+    #home-manager # builds with 'nixos-rebuild switch' (no need to call directly) 
     
     # tool to package desktop applications as AppImages
     #appimagekit
