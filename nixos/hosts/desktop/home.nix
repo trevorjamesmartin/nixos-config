@@ -8,8 +8,7 @@
     ../../modules/home-manager/kitty
     ../../modules/home-manager/conky
     ../../modules/home-manager/wlogout
-    
-    (import ../../modules/home-manager/user-scripts { hostName="desktop"; })
+    ../../modules/home-manager/user-scripts
 
   ];
 
@@ -19,7 +18,7 @@
     hyprland = {
       enable = true;                      # Hyprland configuration
       hyprexpo = true;                    # + (overview of workspaces)
-      hyprbars = true;                    # + (titlebars)
+      hyprbars = false;                    # + (titlebars)
       hyprlock = true;                    # + (screen-lock)
       hypridle = true;                    # + (lock/suspend when idle)
       hyprpaper = true;                   # + (desktop wallpaper)
