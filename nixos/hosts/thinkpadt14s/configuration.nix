@@ -20,7 +20,7 @@ in
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./xdg.nix
-      ./vpn.nix
+      #./vpn.nix
       ../../cachix.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
@@ -83,7 +83,7 @@ in
     consoleLogLevel = 0;
     initrd.verbose = false;
 
-    kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" ];
+    kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" "ipv6.disable=1" ];
 
     kernelPackages = pkgs.linuxPackages_latest;
 
@@ -365,7 +365,7 @@ in
   # Enable NAT
   networking.nat = {
     enable = true;
-    enableIPv6 = true;
+    enableIPv6 = false;
     #externalInterface = "eth0";
     internalInterfaces = [ "wg0" ];
   };

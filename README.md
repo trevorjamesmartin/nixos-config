@@ -1,9 +1,5 @@
 # nixos-config
 
-
-[`/etc/nixos`](./nixos/)
-
-[`home-manager`](./nixos/hosts/default/home-manager)
-
-![pure eval](./pure_eval.jpg)
+[i7 desktop](./nixos/hosts/desktop/)
+[ryzen 7 laptop](./nixos/hosts/thinkpadt14s/)
 

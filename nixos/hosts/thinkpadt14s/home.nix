@@ -17,7 +17,7 @@
 
     hyprland = {
       enable = true;                      # Hyprland configuration
-      hyprbars = true;                    # + (titlebars)
+      hyprbars = false;                    # + (titlebars)
       hyprlock = true;                    # + (screen-lock)
       hypridle = true;                    # + (lock/suspend when idle)
       hyprpaper = true;                   # + (desktop wallpaper)
