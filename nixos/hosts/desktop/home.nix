@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ...}: 
+{ config, lib, pkgs, inputs, localHost, ...}: 
 {
   imports = [
     ../../modules/home-manager/neovim
@@ -75,8 +75,8 @@
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "tm";
-  home.homeDirectory = "/home/tm";
+  home.username = localHost.user;
+  home.homeDirectory = "/home/${localHost.user}";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -132,6 +132,8 @@
     discord
     betterdiscord-installer
     betterdiscordctl
+    pidgin
+    pidginPackages.purple-plugin-pack
 
     # music
     spotify
