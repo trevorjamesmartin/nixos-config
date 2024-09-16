@@ -3,17 +3,13 @@
 
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-
     nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
-    
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     
     catppuccin.url = "github:catppuccin/nix";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-
     hyprpaper.url = "github:hyprwm/hyprpaper";
-    
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
@@ -36,11 +32,14 @@
       ...
   }:
   let
-    hostName="thinkpadt14s";
-    hostArch="x86_64-linux";
+    localHost = {
+      name="desktop";       # hostname
+      arch="x86_64-linux";  # architecture
+      user="tm";            # username
+    };
   in
   {
-      homeConfigurations."tm" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${localHost.user} = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [ 
           inputs.hyprland.homeManagerModules.default
@@ -48,17 +47,17 @@
         ];
       };
       nixosConfigurations = {
-        ${hostName} = nixpkgs.lib.nixosSystem {
-          system = hostArch;
-          specialArgs = { inherit inputs; };
+        ${localHost.name} = nixpkgs.lib.nixosSystem {
+          system = localHost.arch;
+          specialArgs = { inherit inputs; inherit localHost; };
           modules = [
             catppuccin.nixosModules.catppuccin
-            ./hosts/${hostName}/configuration.nix
+            ./hosts/${localHost.name}/configuration.nix
             inputs.home-manager.nixosModules.home-manager {
               home-manager.useGlobalPkgs = false; # setting this to true disables home-manager.$USER options
               home-manager.useUserPackages = true;
-              home-manager.users.tm = import ./hosts/${hostName}/home.nix ;
-              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.users.${localHost.user} = import ./hosts/${localHost.name}/home.nix ;
+              home-manager.extraSpecialArgs = { inherit inputs; inherit localHost; };
             }
           ];
         };

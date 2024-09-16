@@ -1,4 +1,4 @@
-{lib, config, pkgs, ...}:
+{lib, config, pkgs, localHost, ...}:
 with lib; 
 let 
   cfg = config.yoshizl.gaming;
@@ -45,7 +45,7 @@ in {
     
     environment.sessionVariables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATH =
-        "/home/tm/.steam/root/compatibilitytools.d";
+        "/home/${localHost.user}/.steam/root/compatibilitytools.d";
     };
 
   };

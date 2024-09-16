@@ -2,12 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, localHost, ... }:
 let
   theme_flavor = "mocha"; # {mocha,frappe,macchiato,latte}
   theme_accent = "teal"; #{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender} 
   # [--tweaks {black,rimless,normal,float} [{black,rimless,normal,float} ...]]
-  kvantum_theme = "Catppuccin-Mocha-Teal";
+  kvantum_theme = "Catppuccin-Mocha";
 in
 
 {
@@ -22,9 +22,9 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./xdg.nix
       #./vpn.nix
       ../../cachix.nix
+      ../../modules/nixos/xdg.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/hyprland
@@ -106,7 +106,7 @@ in
   # video driver
   services.xserver.videoDrivers = ["amdgpu"];
 
-  networking.hostName = "desktop"; # Define your hostname.
+  networking.hostName = localHost.name; #"desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -277,6 +277,8 @@ in
     # audio (pipewire) controls
     pavucontrol
 
+    espeak-classic
+
   ];
   programs.fuse.userAllowOther = true;
 
@@ -305,7 +307,7 @@ in
     enable = true;
     # Certain features, including CLI integration and system authentication support,
     # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-    polkitPolicyOwners = [ "tm" ];
+    polkitPolicyOwners = [ localHost.user ];
   };
 
   services.avahi = {
