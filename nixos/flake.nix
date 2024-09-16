@@ -33,7 +33,7 @@
   }:
   let
     localHost = {
-      name="desktop";       # hostname
+      name="thinkpadt14s";       # hostname
       arch="x86_64-linux";  # architecture
       user="tm";            # username
     };

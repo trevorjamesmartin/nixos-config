@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, localHost, ... }:
 let
   theme_flavor = "mocha"; # {mocha,frappe,macchiato,latte}
   theme_accent = "teal"; #{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender} 
@@ -19,9 +19,9 @@ in
   imports = [ 
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./xdg.nix
-      #./vpn.nix
       ../../cachix.nix
+      #../../modules/nixos/vpn.nix
+      ../../modules/nixos/xdg.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/plymouth
@@ -110,7 +110,7 @@ in
 
   services.xserver.videoDrivers = ["amdgpu"];
 
-  networking.hostName = "thinkpadt14s"; # Define your hostname.
+  networking.hostName = localHost.name; #"thinkpadt14s"; # Define your hostname.
   
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -150,8 +150,9 @@ in
   console = {
     packages = [pkgs.terminus_font];
     earlySetup = true;
-    font = "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
+    font = "${pkgs.terminus_font}/share/consolefonts/ter-u32n.psf.gz";
   };
+  #    ter-132n.psf.gz";
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
@@ -324,7 +325,7 @@ in
     enable = true;
     # Certain features, including CLI integration and system authentication support,
     # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-    polkitPolicyOwners = [ "tm" ];
+    polkitPolicyOwners = [ localHost.user ];
   };
 
   programs.ssh.enableAskPassword = true;
