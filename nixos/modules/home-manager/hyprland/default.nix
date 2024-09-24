@@ -226,8 +226,8 @@ in
 
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
 
-          (mkIf cfg.hyprlock
-            "hyprlock") # lock screen
+          #(mkIf cfg.hyprlock
+          #  "hyprlock") # lock screen 
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
