@@ -10,13 +10,15 @@ import (
 	"strings"
 )
 
+const VERSION = "0.2"
+
 type plane struct {
 	monitor string
 	paper   string
 }
 
 func (p *plane) json() string {
-	return fmt.Sprintf("{ \"monitor\": \"%s\", \"paper\": \"%s\" }", p.monitor, p.paper)
+	return fmt.Sprintf(`{ "monitor": "%s", "paper": "%s" }`, p.monitor, p.paper)
 }
 
 func listActive() ([]*plane, error) {
@@ -52,25 +54,28 @@ func listActive() ([]*plane, error) {
 	return planes, nil
 }
 
-func jsonPrint(activeplanes []*plane) {
+func jsonFu(activeplanes []*plane, fu func(a ...any) (n int, err error)) {
 	endComma := len(activeplanes) - 1
 	multimon := endComma > 0
 
+	var text string
+
 	if multimon {
-		fmt.Print("[")
+		text += `[`
 	}
 
 	for idx, p := range activeplanes {
-		fmt.Print(p.json())
+		text += p.json()
 		if multimon && idx < endComma {
-			fmt.Print(",")
+			text += `,`
 		}
 	}
 
 	if multimon {
-		fmt.Print("]")
+		text += `]`
 	}
 
+	fu(text)
 }
 
 func unloadWallpaper(image string) {
@@ -165,6 +170,32 @@ func setWallpaper(image string, monitor string) {
 
 }
 
+func configText() string {
+	var text string
+	sources := make(map[string]bool)
+	activeplanes, err := listActive()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i, p := range activeplanes {
+		if i < 1 {
+			if preloaded, _ := sources[p.paper]; !preloaded {
+				text += fmt.Sprintf("preload = %s\n", p.paper)
+				sources[p.paper] = true
+			}
+		}
+	}
+
+	for i, p := range activeplanes {
+		if i < 1 {
+			text += fmt.Sprintf("wallpaper = %s,%s\n", p.monitor, p.paper)
+		}
+	}
+	text += "splash = false\n"
+	return text
+}
+
 func updateConfig() {
 	base := os.Getenv("HOME")
 
@@ -186,27 +217,7 @@ func updateConfig() {
 
 	defer fmt.Println("ok")
 
-	activeplanes, errListing := listActive()
-
-	if errListing != nil {
-		log.Fatal(errListing)
-	}
-
-	sources := make(map[string]bool)
-
-	for _, p := range activeplanes {
-		if preloaded, _ := sources[p.paper]; !preloaded {
-			fmt.Fprintln(f, fmt.Sprintf("preload = %s", p.paper))
-			sources[p.paper] = true
-		}
-	}
-
-	for _, p := range activeplanes {
-		fmt.Fprintln(f, fmt.Sprintf("wallpaper = %s,%s", p.monitor, p.paper))
-	}
-
-	fmt.Fprintln(f, "splash = false")
-
+	fmt.Fprint(f, configText())
 }
 
 func activeMonitor() string {
@@ -236,14 +247,22 @@ func main() {
 
 		switch argsWithoutProg[0] {
 
+		case "-listen":
+			api()
+		case "--listen":
+			api()
+		case "-l":
+			api()
 		case "-json":
-			jsonPrint(activeplanes)
+			jsonFu(activeplanes, fmt.Print)
 		case "-j":
-			jsonPrint(activeplanes)
+			jsonFu(activeplanes, fmt.Print)
 		case "--json":
-			jsonPrint(activeplanes)
+			jsonFu(activeplanes, fmt.Print)
 		case "--j":
-			jsonPrint(activeplanes)
+			jsonFu(activeplanes, fmt.Print)
+		case "--html":
+			fmt.Print(hyperText())
 		default:
 			// path to wallpaper ?
 			_, err := os.Stat(argsWithoutProg[0])
@@ -276,7 +295,7 @@ func main() {
 	}
 
 	if len(argsWithoutProg) == 0 {
-		fmt.Println("hyprPaperPlanes 0.1")
+		fmt.Printf("hyprPaperPlanes %s", VERSION)
 	}
 
 }
