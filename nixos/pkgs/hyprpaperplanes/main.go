@@ -178,19 +178,15 @@ func configText() string {
 		log.Fatal(err)
 	}
 
-	for i, p := range activeplanes {
-		if i < 1 {
-			if preloaded, _ := sources[p.paper]; !preloaded {
-				text += fmt.Sprintf("preload = %s\n", p.paper)
-				sources[p.paper] = true
-			}
+	for _, p := range activeplanes {
+		if preloaded, _ := sources[p.paper]; !preloaded {
+			text += fmt.Sprintf("preload = %s\n", p.paper)
+			sources[p.paper] = true
 		}
 	}
 
-	for i, p := range activeplanes {
-		if i < 1 {
-			text += fmt.Sprintf("wallpaper = %s,%s\n", p.monitor, p.paper)
-		}
+	for _, p := range activeplanes {
+		text += fmt.Sprintf("wallpaper = %s,%s\n", p.monitor, p.paper)
 	}
 	text += "splash = false\n"
 	return text
