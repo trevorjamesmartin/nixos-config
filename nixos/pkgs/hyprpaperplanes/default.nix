@@ -4,7 +4,7 @@ buildGoModule rec {
   pname = "hyprpaperplanes";
   version = "0.2";
 
-  src = ./.;
+  src = ./src;
   vendorHash = null;
 
   meta = with lib; {

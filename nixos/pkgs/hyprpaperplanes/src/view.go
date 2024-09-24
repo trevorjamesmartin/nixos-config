@@ -8,41 +8,56 @@ import (
 	"os"
 )
 
-func api() {
+func jsonText() string {
+	active, err := listActive()
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(hyperText()))
-	})
-
-	handleConfig := func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(configText()))
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	handleJSON := func(w http.ResponseWriter, r *http.Request) {
-		active, err := listActive()
+	endComma := len(active) - 1
+	multimon := endComma > 0
 
-		if err != nil {
-			log.Fatal(err)
+	var text string
+
+	if multimon {
+		text += `[`
+	}
+
+	for idx, p := range active {
+		text += p.json()
+		if multimon && idx < endComma {
+			text += `,`
 		}
-
-		jsonFu(active, func(a ...any) (n int, err error) {
-			line := fmt.Sprint(a[0])
-			w.Write([]byte(line))
-			return 0, nil
-		})
 	}
 
-	mux.HandleFunc("GET /conf", handleConfig)
-	mux.HandleFunc("GET /config", handleConfig)
-	mux.HandleFunc("GET /configuration", handleConfig)
-	mux.HandleFunc("GET /hyprpaper.conf", handleConfig)
+	if multimon {
+		text += `]`
+	}
 
-	mux.HandleFunc("GET /json", handleJSON)
+	return text
+}
 
-	server := http.Server{Addr: ":3000", Handler: mux}
-	fmt.Println("Listening @ http://127.0.0.1:3000")
-	server.ListenAndServe()
+func configText() string {
+	var text string
+	sources := make(map[string]bool)
+	activeplanes, err := listActive()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, p := range activeplanes {
+		if preloaded, _ := sources[p.paper]; !preloaded {
+			text += fmt.Sprintf("preload = %s\n", p.paper)
+			sources[p.paper] = true
+		}
+	}
+
+	for _, p := range activeplanes {
+		text += fmt.Sprintf("wallpaper = %s,%s\n", p.monitor, p.paper)
+	}
+	text += "splash = false\n"
+	return text
 }
 
 func hyperText() string {

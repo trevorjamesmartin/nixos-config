@@ -10,15 +10,41 @@ import (
 	"strings"
 )
 
-const VERSION = "0.2"
+func readFromCLI(argsWithoutProg []string) {
+	// path to wallpaper ?
+	_, err := os.Stat(argsWithoutProg[0])
+	if os.IsNotExist(err) {
+		fmt.Println("not a valid background image")
+	} else {
+		activeplanes, err := listActive()
 
-type plane struct {
-	monitor string
-	paper   string
-}
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-func (p *plane) json() string {
-	return fmt.Sprintf(`{ "monitor": "%s", "paper": "%s" }`, p.monitor, p.paper)
+		// file exists
+		nextImage := argsWithoutProg[0]
+
+		monitor := activeMonitor()
+
+		var prevImage string
+
+		for _, p := range activeplanes {
+			if p.monitor == monitor {
+				prevImage = p.paper
+				break
+			}
+		}
+
+		if prevImage != nextImage {
+			unloadWallpaper(prevImage)
+			preloadWallpaper(nextImage)
+			setWallpaper(nextImage, monitor)
+			updateConfig()
+		}
+	}
+
 }
 
 func listActive() ([]*plane, error) {
@@ -52,30 +78,6 @@ func listActive() ([]*plane, error) {
 	}
 
 	return planes, nil
-}
-
-func jsonFu(activeplanes []*plane, fu func(a ...any) (n int, err error)) {
-	endComma := len(activeplanes) - 1
-	multimon := endComma > 0
-
-	var text string
-
-	if multimon {
-		text += `[`
-	}
-
-	for idx, p := range activeplanes {
-		text += p.json()
-		if multimon && idx < endComma {
-			text += `,`
-		}
-	}
-
-	if multimon {
-		text += `]`
-	}
-
-	fu(text)
 }
 
 func unloadWallpaper(image string) {
@@ -170,28 +172,6 @@ func setWallpaper(image string, monitor string) {
 
 }
 
-func configText() string {
-	var text string
-	sources := make(map[string]bool)
-	activeplanes, err := listActive()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, p := range activeplanes {
-		if preloaded, _ := sources[p.paper]; !preloaded {
-			text += fmt.Sprintf("preload = %s\n", p.paper)
-			sources[p.paper] = true
-		}
-	}
-
-	for _, p := range activeplanes {
-		text += fmt.Sprintf("wallpaper = %s,%s\n", p.monitor, p.paper)
-	}
-	text += "splash = false\n"
-	return text
-}
-
 func updateConfig() {
 	base := os.Getenv("HOME")
 
@@ -228,70 +208,4 @@ func activeMonitor() string {
 	err = json.Unmarshal(buf, &Map)
 	monitor := Map["monitor"]
 	return string(monitor)
-}
-
-func main() {
-	argsWithoutProg := os.Args[1:]
-
-	if len(argsWithoutProg) > 0 {
-		activeplanes, err := listActive()
-
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		switch argsWithoutProg[0] {
-
-		case "-listen":
-			api()
-		case "--listen":
-			api()
-		case "-l":
-			api()
-		case "-json":
-			jsonFu(activeplanes, fmt.Print)
-		case "-j":
-			jsonFu(activeplanes, fmt.Print)
-		case "--json":
-			jsonFu(activeplanes, fmt.Print)
-		case "--j":
-			jsonFu(activeplanes, fmt.Print)
-		case "--html":
-			fmt.Print(hyperText())
-		default:
-			// path to wallpaper ?
-			_, err := os.Stat(argsWithoutProg[0])
-			if os.IsNotExist(err) {
-				fmt.Println("not a valid background image")
-			} else {
-				// file exists
-				nextImage := argsWithoutProg[0]
-
-				monitor := activeMonitor()
-
-				var prevImage string
-
-				for _, p := range activeplanes {
-					if p.monitor == monitor {
-						prevImage = p.paper
-						break
-					}
-				}
-
-				if prevImage != nextImage {
-					unloadWallpaper(prevImage)
-					preloadWallpaper(nextImage)
-					setWallpaper(nextImage, monitor)
-					updateConfig()
-				}
-			}
-		}
-
-	}
-
-	if len(argsWithoutProg) == 0 {
-		fmt.Printf("hyprPaperPlanes %s", VERSION)
-	}
-
 }
