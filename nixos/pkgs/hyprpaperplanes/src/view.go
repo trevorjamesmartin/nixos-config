@@ -60,6 +60,65 @@ func configText() string {
 	return text
 }
 
+func dropFileScript() string {
+	return fmt.Sprintf(`
+	<script type="text/javascript">
+
+	async function sendData(data, url) {
+		  try {
+		    const response = await fetch(url, {
+		      method: "POST",
+		      body: data,
+		    });
+		    console.log(await response.statusText);
+		    location.reload()
+		  } catch (e) {
+		    console.error(e);
+		  }
+	}
+
+	function handleDrop(event) {
+	  event.preventDefault();
+	  
+	  if (event.dataTransfer.items) {
+	    let filecount = 0;
+	    const fileLimit = 1;
+	    [...event.dataTransfer.items].forEach((item, i) => {
+	      // If dropped items aren't files, reject them
+	      if (item.kind === "file" && filecount < fileLimit) {
+		filecount++;
+		const file = item.getAsFile();
+		const sendTo = "/upload?monitor=" + event.target.className;
+		const formSelector = "#form_" + event.target.className;
+		const formElement = document.querySelector(formSelector)
+		
+		// Take over form submission
+		formElement.addEventListener("submit", (event) => {
+		  event.preventDefault();
+		  // Associate the FormData object with the form element
+		  const formData = new FormData(formElement);
+		  formData.set("imageFile", file);
+		  sendData(formData, sendTo);
+		});
+
+		let sendBtnSelector = "#send_" + event.target.className;
+		document.querySelector(sendBtnSelector).click()
+	      }
+	    });
+	  } else {
+	    [...event.dataTransfer.files].forEach((file, i) => { console.log('?', file, i); });
+	  }
+	}
+
+	function allowDrop(event) {
+	  event.preventDefault();
+	}
+
+
+	</script>
+	`)
+}
+
 func hyperText() string {
 	var hypertext string
 	activeplanes, errListing := listActive()
@@ -82,15 +141,19 @@ func hyperText() string {
 		.formats {
 			display: flex;
 			justify-content: space-evenly;
+			font-size: 1.5rem;
+			letter-spacing: 1px;
 		}
 	</style>
+	%s
 	</head>
 	<body>
+
 		<div class="formats">
 		<a href="/hyprpaper.conf">hyprpaper.conf</a>
 		<a href="/json">JSON</a>
 		</div>
-	`, VERSION)
+	`, VERSION, dropFileScript())
 
 	for _, p := range activeplanes {
 		bts, err := os.ReadFile(p.paper)
@@ -103,8 +166,16 @@ func hyperText() string {
 			http.DetectContentType(bts),
 			base64.StdEncoding.EncodeToString(bts))
 
+		form := fmt.Sprintf(`<form id="form_%s" enctype="multipart/form-data" action="/upload/%s" method="post" hidden>
+			    <input type="file" name="imageFile" />
+		  	    <input id="send_%s" type="submit" value="upload" />
+			</form>`, p.monitor, p.monitor, p.monitor)
+
 		hypertext += fmt.Sprintf(`
-		<div class="%s">%s</div>
+		<div class="%s" ondrop="handleDrop(event)" ondragover="allowDrop(event)">
+			%s
+			%s
+		</div>
 		<style>
 		.%s {
 			line-height: 8rem; 
@@ -121,7 +192,7 @@ func hyperText() string {
 			border: 4px solid white;
 			border-radius: 12px;
 		};
-		</style>`, p.monitor, p.monitor, p.monitor, data)
+		</style>`, p.monitor, p.monitor, form, p.monitor, data)
 	}
 
 	hypertext += `</body></html>`

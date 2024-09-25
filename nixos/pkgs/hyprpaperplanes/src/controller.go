@@ -47,6 +47,35 @@ func readFromCLI(argsWithoutProg []string) {
 
 }
 
+func readFromWeb(monitor string, filename string) {
+	activeplanes, err := listActive()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// file exists
+	nextImage := filename
+
+	var prevImage string
+
+	for _, p := range activeplanes {
+		if p.monitor == monitor {
+			prevImage = p.paper
+			break
+		}
+	}
+
+	if prevImage != nextImage {
+		unloadWallpaper(prevImage)
+		preloadWallpaper(nextImage)
+		setWallpaper(nextImage, monitor)
+		updateConfig()
+	}
+
+}
+
 func listActive() ([]*plane, error) {
 	cmd := exec.Command("hyprctl", "hyprpaper", "listactive")
 	stdout, err := cmd.StdoutPipe()
