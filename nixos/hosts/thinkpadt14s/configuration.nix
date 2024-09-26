@@ -20,7 +20,7 @@ in
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../../cachix.nix
-      #../../modules/nixos/vpn.nix
+      ../../modules/nixos/vpn.nix
       ../../modules/nixos/xdg.nix
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
@@ -373,7 +373,7 @@ in
   
   networking.firewall = {
     checkReversePath = "loose";
-    allowedTCPPorts = [ 53 3333 50001 ];
+    allowedTCPPorts = [ 53 3000 3333 50001 ];
     allowedUDPPorts = [ 53 51820 4444 5567 ];
   };
   # Or disable the firewall altogether.
