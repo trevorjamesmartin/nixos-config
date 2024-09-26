@@ -37,16 +37,6 @@
     user-scripts.enable = true;           # scripts are prefixed by "$USER-"
   };
 
-  wayland.windowManager.hyprland.plugins = [
-        (lib.mkIf config.yoshizl.hyprland.hyprexpo
-          #inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-          pkgs.hyprlandPlugins.hyprexpo)
-
-        (lib.mkIf config.yoshizl.hyprland.hyprbars
-          #inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-          pkgs.hyprlandPlugins.hyprbars)
-      ];
-
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = localHost.user;
