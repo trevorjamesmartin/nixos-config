@@ -7,14 +7,14 @@ buildGoModule rec {
   src = fetchFromGitHub {
     owner = "trevorjamesmartin";
     repo = "hyprpaperplanes";
-    rev = "8938fa8f4344b6149d8d65aa4ceca4b06d67d489";
-    hash = "sha256-F9wTaHTYW/L+zYWBOgWRelk6I+y6zX4Y6MXlnaA7kj8=";
+    rev = "ae7cff1392db076851239f7710466900dadfd692";
+    hash = "sha256-yVdsM+uWAtEtTgrid90OySgdxMLp40rPCR4VL3BC5Ig=";
   };
   vendorHash = null;
 
   meta = with lib; {
     description = "Simple tool to set your hyprpaper, written in Go";
     mainProgram = "hyprPaperPlanes";
-    license = licenses.mit;
+    license = licenses.bsd3;
   };
 }
