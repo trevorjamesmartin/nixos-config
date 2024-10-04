@@ -2,13 +2,13 @@
 
 buildGoModule rec {
   pname = "hyprpaperplanes";
-  version = "0.8";
+  version = "0.9";
 
   src = fetchFromGitHub {
     owner = "trevorjamesmartin";
     repo = "hyprpaperplanes";
-    rev = "09e593e31888ba79418ea892ba4122252ab95cf7";
-    hash = "sha256-gLG/4Te+pySy9tDHj4m9hcZrRbRHKwwVG6ZMHAlOePI=";
+    rev = "75b0394947b86a4ccc9fa43c71ccc6d555fa4eb2";
+    hash = "sha256-SpAC2yMpzYi+xfzDl7He19xgcSgzEJ1jcwKgaYX0zK8=";
   };
   vendorHash = null;
 
