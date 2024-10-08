@@ -8,13 +8,13 @@ in {
 
     nixpkgs.overlays = [
        (self: super: {
-        hyprPaperPlanes = pkgs.callPackage ./hyprpaperplanes.nix {};
+        hypsi = pkgs.callPackage ./hypsi.nix {};
        })
     ];
 
     home.packages = with pkgs; [
       hyprpaper
-      hyprPaperPlanes
+      hypsi
     ];
     
   };

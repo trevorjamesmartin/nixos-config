@@ -1,20 +1,19 @@
 { buildGoModule, lib, fetchFromGitHub, ... }:
 
 buildGoModule rec {
-  pname = "hyprpaperplanes";
-  version = "0.9.3";
-
+  pname = "hypsi";
+  version = "0.9.4";
   src = fetchFromGitHub {
     owner = "trevorjamesmartin";
-    repo = "hyprpaperplanes";
-    rev = "16fa3251fba9e8ebd6a9f5b532c59d23688f4236";
-    hash = "sha256-JpH6ySPPH92R0RqONNQnzc3g1H5M3MJaUwMrK3HNyGs=";
+    repo = "hypsi";
+    rev = "1cae8395ce1d594740ffca298b8f82bf6ffc6b01";
+    hash = "sha256-t+SApXfBID8tyttavj0IOG91Z6J2ev31wvj0bH3GOfs=";
   };
   vendorHash = null;
 
   meta = with lib; {
     description = "Simple tool to set your hyprpaper, written in Go";
-    mainProgram = "hyprPaperPlanes";
+    mainProgram = "hypsi";
     license = licenses.bsd3;
   };
   

@@ -29,7 +29,7 @@ in
       '')
       # browse for a wallpaper, 
       (pkgs.writeShellScriptBin "wallpaper-select" ''
-      PREVIEW=true rofi -mode filebrowser -show filebrowser|xargs hyprPaperPlanes'')
+      PREVIEW=true rofi -mode filebrowser -show filebrowser|xargs hypsi'')
     ];
 
     home.file.".config/rofi/theme.rasi".source = ./fspmod.rasi;
