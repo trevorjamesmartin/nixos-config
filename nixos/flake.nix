@@ -3,23 +3,17 @@
 
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    
     catppuccin.url = "github:catppuccin/nix";
-
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland.url = "github:hyprwm/hyprland";
     hyprpaper.url = "github:hyprwm/hyprpaper";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    home-manager.url = "github:nix-community/home-manager";
+    
+    hypsi.url = "github:trevorjamesmartin/hypsi";
   };
 
   outputs = inputs @ {
@@ -33,7 +27,7 @@
   }:
   let
     localHost = {
-      name="thinkpadt14s";       # hostname
+      name="thinkpadt14s";  # hostname
       arch="x86_64-linux";  # architecture
       user="tm";            # username
     };
