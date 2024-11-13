@@ -8,8 +8,9 @@ in {
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       hyprpaper
-      inputs.hypsi.defaultPackage.x86_64-linux 
+      inputs.hypsi.packages.x86_64-linux.default
     ];
+    
   };
 
-}
+
