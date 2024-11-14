@@ -50,9 +50,13 @@ in
           name = "Hyprland-Session";
           # redirect console output to /tmp/hyprlandSession.log
           start = ''
-            ${lib.getExe pkgs.hyprland} > /tmp/hyprlandSession.log 2>&1 &&
+            Hyprland > /dev/null 2>&1 &&
             waitPID=$!
           '';
+        # start = ''
+        #   ${lib.getExe pkgs.hyprland} > /tmp/hyprlandSession.log 2>&1 &&
+        #   waitPID=$!
+        # '';
         }
       ];
 

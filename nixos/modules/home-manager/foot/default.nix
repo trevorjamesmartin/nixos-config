@@ -15,9 +15,10 @@ in {
       file.".config/foot/foot.ini".source = (pkgs.formats.iniWithGlobalSection {}).generate "foot.ini" {
         globalSection = {
           term="xterm-256color";
-          font="RecMonoLinear Nerd Font Mono:size=11";
+          font="DejaVu Sans Mono:size=12";
           dpi-aware="yes";
         };
+
         sections = {
           
           colors = {
