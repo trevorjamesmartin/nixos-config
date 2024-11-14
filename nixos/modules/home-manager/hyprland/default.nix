@@ -137,7 +137,6 @@ in
             # reclaim space
             hyprctl --batch "\
                 keyword animations:enabled 0;\
-                keyword decoration:drop_shadow 0;\
                 keyword decoration:blur:enabled 0;\
                 keyword general:gaps_in 0;\
                 keyword general:gaps_out 0;\
@@ -175,14 +174,6 @@ in
       enable = true;
       xwayland.enable = true;
       systemd.enable = true;
-
-      plugins = [
-        (mkIf config.yoshizl.hyprland.hyprexpo
-          pkgs.hyprlandPlugins.hyprexpo)
-
-        (mkIf config.yoshizl.hyprland.hyprbars
-          pkgs.hyprlandPlugins.hyprbars)
-      ];
 
       settings = {
         
@@ -226,12 +217,13 @@ in
 
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
 
-          #(mkIf cfg.hyprlock
-          #  "hyprlock") # lock screen 
+        # (mkIf cfg.hyprlock
+        #   "hyprlock") # lock screen when hyprland starts
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
           "dunst" # notifications
+
         ];
 
         exec = [
@@ -239,7 +231,7 @@ in
           "pidof waybar && pidof waybar|xargs kill -9 -- ;waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css"
           # conky
           "kill -9 $(pidof conky); sleep 1; conky"
-
+          
           # set the cursor theme
           "hyprctl setcursor $XCURSOR_THEME $XCURSOR_SIZE"
           
@@ -290,25 +282,19 @@ in
                 size = 3;
                 passes = 1;
             };
-
-            drop_shadow = "yes";
-            shadow_range = 4;
-            shadow_render_power = 3;
-            "col.shadow" = "rgba(1a1a1aee)";
         };
 
         animations = {
             enabled = "yes";
             # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
-            bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
+            #bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
             animation = [
-              "windows, 1, 7, myBezier"
+              "windows, 1, 7, default"
               "windowsOut, 1, 7, default, popin 80%"
               "border, 1, 10, default"
               "borderangle, 1, 8, default"
               "fade, 1, 7, default"
-              #"workspaces, 1, 6, default"
-              "workspaces, 1, 2, default, slidevert"
+              "workspaces, 1, 6, default"
             ];
         };
 
@@ -320,7 +306,6 @@ in
 
         master = {
             # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-            no_gaps_when_only = 1;
         };
 
         gestures = {
@@ -420,6 +405,9 @@ in
 
           "float,class:(pavucontrol)" # pulse audio control
           "float,class:(nm-applet)"   # network manager applet
+          
+          "float,class:(hypsi)" # wallpaper history
+          "size 1305 435,class:(hypsi)" # (two monitors)
 
           "float,class:it.mijorus.smile"       # emoji picker
           "stayfocused,class:it.mijorus.smile" # 
@@ -440,6 +428,7 @@ in
           "$mainMod, code:49, togglespecialworkspace, neovim"
           # launcher
           #"$mainMod, ESC, exec, nwg-drawer"       
+          "$mainMod SHIFT, W, exec, Hypsi-GUI"
 
           # emoji picker 🤣
           "$mainMod SHIFT, Equal, exec, smile"
@@ -485,6 +474,11 @@ in
           "$mainMod, right, movefocus, r"
           "$mainMod, up, movefocus, u"
           "$mainMod, down, movefocus, d"
+          
+          "$mainMod SHIFT, SPACE, swapsplit"
+          #"$mainMod SHIFT, right, movefocus, r"
+          #"$mainMod SHIFT, up, movefocus, u"
+          #"$mainMod SHIFT, down, movefocus, d"
 
           "$mainMod SHIFT, PRINT, exec, grim -g \"$(slurp)\" - | swappy -f -"
           "$mainMod CONTROL , KP_INSERT, exec, grim -g \"$(slurp)\" - | swappy -f -"
