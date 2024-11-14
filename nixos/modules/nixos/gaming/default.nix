@@ -3,7 +3,9 @@ with lib;
 let 
   cfg = config.yoshizl.gaming;
 in {
-  options.yoshizl.gaming.enable = mkEnableOption "play some video games";
+  options.yoshizl.gaming = {
+    enable = mkEnableOption "play some video games";
+  };
 
   config = mkIf cfg.enable {
     # enable opengl options that help with gaming
@@ -26,9 +28,10 @@ in {
       libdrm
       libGL.dev
 
-      retroarchFull
-      retroarch-assets
-      retroarch-joypad-autoconfig
+      #retroarchFull
+      #retroarch-assets
+      #retroarch-joypad-autoconfig
+
     ];
 
     programs.gamemode.enable = true;
