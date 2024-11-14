@@ -22,7 +22,6 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      #./vpn.nix
       ../../cachix.nix
       ../../modules/nixos/xdg.nix
       ../../modules/nixos/thunar
@@ -38,7 +37,15 @@ in
       ../../modules/nixos/gaming
   ];
   
+  # second hard drive
+  fileSystems."/opt" =
+    { device = "/dev/disk/by-uuid/9affef5f-8c87-4b57-8e35-8cc1c014882e";
+      fsType = "ext4";
+    };
+  
+  fonts.fontDir.enable = true; # ~/.local/share/fonts
   nixpkgs.overlays = [
+
     (final: prev: {
       adi1090x-plymouth-themes = prev.adi1090x-plymouth-themes.overrideAttrs(oldAttrs: rec {
         selected_themes = [ "hexa_retro" ];
@@ -152,9 +159,16 @@ in
 
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
-  hardware.xone.enable = true;
-  # Enable sound with pipewire.
+  services.printing.enable = false;
+
+  hardware.xone.enable = true; # works with (elite series)
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+  # hardware.xpadneo.enable = false;
+  
+    # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -269,15 +283,19 @@ in
     networkmanagerapplet
 
     # bluetooth
-##  blueman
-##  bluez
-##  bluez-tools
-##  libinput
+    blueman
+    bluez
+    bluez-tools
+    #libinput
   
     # audio (pipewire) controls
     pavucontrol
 
     espeak-classic
+
+    gparted
+
+    cryptsetup
 
   ];
   programs.fuse.userAllowOther = true;
@@ -334,7 +352,7 @@ in
   
   networking.firewall = {
     checkReversePath = "loose";
-    allowedTCPPorts = [ 53 3333 50001 ];
+    allowedTCPPorts = [ 53 3000 3333 8080 50001 ];
     allowedUDPPorts = [ 53 51820 4444 5567 ];
   };
   # Open ports in the firewall.

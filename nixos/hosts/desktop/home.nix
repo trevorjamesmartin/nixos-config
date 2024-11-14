@@ -64,11 +64,9 @@
   
   wayland.windowManager.hyprland.plugins = [
     (lib.mkIf config.yoshizl.hyprland.hyprexpo
-      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo)
       pkgs.hyprlandPlugins.hyprexpo)
 
      (lib.mkIf config.yoshizl.hyprland.hyprbars
-      #inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars)
       pkgs.hyprlandPlugins.hyprbars)   
 
   ];
@@ -118,6 +116,7 @@
     ripgrep-all
     imagemagick
     gh
+    tmux
     irssi
 
     # other web browsers
@@ -138,12 +137,21 @@
     # music
     spotify
 
+    # code 
+    gitkraken
+
+    # dba
+    dbeaver-bin
+
+    # fun
+    lsd
   ];
   programs.bash.enable = true;
   programs.zsh = {
     enable = true;
   };
   fonts.fontconfig.enable = true; # required to autoload fonts from packages
+  
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
