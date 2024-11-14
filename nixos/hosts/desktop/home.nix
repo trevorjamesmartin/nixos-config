@@ -62,15 +62,6 @@
           "10, monitor:HDMI-A-1"
   ];
   
-  wayland.windowManager.hyprland.plugins = [
-    (lib.mkIf config.yoshizl.hyprland.hyprexpo
-      pkgs.hyprlandPlugins.hyprexpo)
-
-     (lib.mkIf config.yoshizl.hyprland.hyprbars
-      pkgs.hyprlandPlugins.hyprbars)   
-
-  ];
-
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = localHost.user;

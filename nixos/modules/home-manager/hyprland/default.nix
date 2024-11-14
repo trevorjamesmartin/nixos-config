@@ -175,6 +175,14 @@ in
       xwayland.enable = true;
       systemd.enable = true;
 
+      plugins = [
+        (mkIf config.yoshizl.hyprland.hyprexpo
+          pkgs.hyprlandPlugins.hyprexpo)
+
+        (mkIf config.yoshizl.hyprland.hyprbars
+          pkgs.hyprlandPlugins.hyprbars)
+      ];
+
       settings = {
         
         monitor = [
