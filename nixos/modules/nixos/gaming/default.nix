@@ -21,6 +21,8 @@ in {
       steam-run
       mangohud
       protonup
+      protonup-qt
+
       lutris
       heroic
       mesa

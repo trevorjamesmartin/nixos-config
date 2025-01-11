@@ -105,10 +105,12 @@ in
         powerline-symbols
         xkcd-font
         udev-gothic-nf
-        nerdfonts
         font-awesome
         helvetica-neue-lt-std
         joypixels
+        nerd-fonts.terminess-ttf
+        nerd-fonts.dejavu-sans-mono
+        nerd-fonts.meslo-lg
       ];
 
       fontconfig = {

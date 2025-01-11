@@ -187,10 +187,9 @@ in
         
         monitor = [
           # position desktop monitors (when plugged in)
-          "eDP-1,preferred,auto,auto" # laptop screen
-          "DP-2,2560x1440,1920x0,1"  # left monitor
-          "HDMI-A-1,2560x1440,4480x0,1" # right monitor
-          #",preferred,auto,1"        # everything else (includes laptop)
+          "DP-1,2560x1440,1920x0,1"  # left monitor
+          "DP-2,2560x1440,4480x0,1" # right monitor
+          ",preferred,auto,auto"        # everything else (includes laptop)
         ];
 
         xwayland = {
@@ -203,16 +202,16 @@ in
           "special:tunes, on-created-empty:spotify"
 
           # left = odd, right = even
-          "1, monitor:DP-2"
-          "2, monitor:HDMI-A-1" 
-          "3, monitor:DP-2"
-          "4, monitor:HDMI-A-1"
-          "5, monitor:DP-2"
-          "6, monitor:HDMI-A-1"
-          "7, monitor:DP-2"
-          "8, monitor:HDMI-A-1"
-          "9, monitor:DP-2"
-          "10, monitor:HDMI-A-1"
+          "1, monitor:DP-1"
+          "2, monitor:DP-2" 
+          "3, monitor:DP-1"
+          "4, monitor:DP-2"
+          "5, monitor:DP-1"
+          "6, monitor:DP-2"
+          "7, monitor:DP-1"
+          "8, monitor:DP-2"
+          "9, monitor:DP-1"
+          "10, monitor:DP-2"
         ];
 
         exec-once = [
@@ -225,8 +224,8 @@ in
 
           "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1" # auth kit
 
-        # (mkIf cfg.hyprlock
-        #   "hyprlock") # lock screen when hyprland starts
+         (mkIf cfg.hyprlock
+          "hyprlock") # lock screen when hyprland starts
           "hypridle" # power management
           "nm-applet --indicator &" # requires pkgs.networkmanagerapplet
           "libinput-gestures &" # gesture support (swipe)
@@ -330,19 +329,18 @@ in
 
 
         plugin = {
-            
-          hyprexpo = mkIf config.yoshizl.hyprland.hyprexpo {
-            columns = 3;
-            gap_size = 5;
-            bg_col = "rgb(111111)";
-            workspace_method = "center current"; # [center/first] [workspace] e.g. first 1 or center m+1
 
-            enable_gesture = "true"; # laptop touchpad
-            gesture_fingers = 3;  # 3 or 4
-            gesture_distance = 300; # how far is the "max"
-            gesture_positive = true; # positive = swipe down. Negative = swipe up.
-          };
-        
+           hyprexpo = mkIf config.yoshizl.hyprland.hyprexpo {
+             columns = 3;
+             gap_size = 5;
+             bg_col = "rgb(111111)";
+             workspace_method = "center current"; # [center/first] [workspace] e.g. first 1 or center m+1
+             enable_gesture = "true"; # laptop touchpad
+             gesture_fingers = 3;  # 3 or 4
+             gesture_distance = 300; # how far is the "max"
+             gesture_positive = true; # positive = swipe down. Negative = swipe up.
+           };
+
           hyprbars = mkIf config.yoshizl.hyprland.hyprbars {
             bar_height = 20;
             bar_color = "rgb(48, 52, 70)";
@@ -445,8 +443,8 @@ in
           "$mainMod SHIFT, Minus, exec, hyprpicker -a"
           
           # overview
-          (mkIf cfg.hyprexpo
-          "$mainMod, Tab, hyprexpo:expo, toggle")
+          (mkIf config.yoshizl.hyprland.hyprexpo
+            "$mainMod, Tab, hyprexpo:expo, toggle")
 
           # lock screen
           "$mainMod SHIFT, Delete, exec, wlogout"

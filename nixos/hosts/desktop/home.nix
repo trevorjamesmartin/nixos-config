@@ -87,6 +87,14 @@
       theme = "robbyrussell";
     };
   };
+  
+  programs = {
+    direnv = {
+      enable = true;
+      enableBashIntegration = true; # see note on other shells below
+      nix-direnv.enable = true;
+    };
+  };
 
   programs.brave = {
     enable = true;
@@ -136,6 +144,9 @@
 
     # fun
     lsd
+
+    # dowloaders
+    torrential
   ];
   programs.bash.enable = true;
   programs.zsh = {

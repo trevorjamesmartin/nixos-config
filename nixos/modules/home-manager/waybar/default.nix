@@ -14,7 +14,7 @@ in {
         # weather for waybar
         wttrbar
 
-        cava # for waybar module
+      #cava # for waybar module
 
     ];
 

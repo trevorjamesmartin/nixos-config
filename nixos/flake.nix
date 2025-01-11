@@ -3,17 +3,24 @@
 
   inputs = {
     nixos-hardware.url = "github:nixos/nixos-hardware";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    #nixpkgs-release.url = "github:nixos/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs";
     catppuccin.url = "github:catppuccin/nix";
     hyprland.url = "github:hyprwm/hyprland";
+    #hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     hyprpaper.url = "github:hyprwm/hyprpaper";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
-    home-manager.url = "github:nix-community/home-manager";
-    
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hypsi.url = "github:trevorjamesmartin/hypsi";
+
   };
 
   outputs = inputs @ {
@@ -25,14 +32,16 @@
       catppuccin,
       ...
   }:
+
   let
     localHost = {
-      name="thinkpadt14s";  # hostname
+      name="desktop";       # hostname
       arch="x86_64-linux";  # architecture
       user="tm";            # username
     };
   in
   {
+      
       homeConfigurations.${localHost.user} = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [ 
@@ -40,6 +49,7 @@
           inputs.catppuccin.homeManagerModules.catppuccin
         ];
       };
+
       nixosConfigurations = {
         ${localHost.name} = nixpkgs.lib.nixosSystem {
           system = localHost.arch;
@@ -56,5 +66,7 @@
           ];
         };
       };
+
   };
+
 }

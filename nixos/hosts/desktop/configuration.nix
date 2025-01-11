@@ -27,6 +27,7 @@ in
       ../../modules/nixos/thunar
       ../../modules/nixos/greeter
       ../../modules/nixos/hyprland
+      ../../modules/nixos/vpn.nix
 
       (import ../../modules/nixos/theme {
           gtk_theme="catppuccin-${theme_flavor}-${theme_accent}-standard";
@@ -77,20 +78,21 @@ in
       enable = true;          # installs Thunar file manager
       removeWallpaper = true;
     };
-    hyprland.enable = true;   # install Hyprland with kwallet
+    hyprland = {
+      enable = true;   # install Hyprland with kwallet
+    };
 
     gaming.enable = true;     # video games
   };
-
   # plymouth
-  boot.plymouth.themePackages = [ pkgs.adi1090x-plymouth-themes ];
-  boot.plymouth.theme = lib.mkForce "hexa_retro";
+  #boot.plymouth.themePackages = [ pkgs.adi1090x-plymouth-themes ];
+  #boot.plymouth.theme = lib.mkForce "hexa_retro";
   boot.plymouth.enable = true;
   
   # quiet boot
   boot.consoleLogLevel = 0;
   boot.initrd.verbose = false;
-  boot.kernelParams = [ "quiet" "splash" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" "ipv6.disable=1" ];
+  boot.kernelParams = [ "quiet" "rd.systemd.show_status=false" "rd.udev.log_level=0" "udev.log_level=0" "boot.shell_on_fail" "ipv6.disable=1" "mds=full" ];
 
   # boot loader
   boot.loader.systemd-boot.enable = true;
@@ -99,6 +101,8 @@ in
 
   # kernel 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  
+ #pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" "v4l2loopback" ];
 
   # enable firmware updates
@@ -122,6 +126,13 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+  
+  # samba discovery
+  services.gvfs = {
+    enable = true;
+    package = lib.mkForce pkgs.gnome.gvfs;
+  };
+
 
   # Set your time zone.
   time.timeZone = "America/New_York";
@@ -169,7 +180,7 @@ in
   # hardware.xpadneo.enable = false;
   
     # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -221,6 +232,10 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+
+    cifs-utils # samba cli 
+
+
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
     fastfetch
@@ -296,6 +311,48 @@ in
     gparted
 
     cryptsetup
+
+    # vscode 
+    (vscode-with-extensions.override {
+      vscodeExtensions = with vscode-extensions; [
+        
+        # nix bundle
+        jnoortheen.nix-ide
+        mkhl.direnv
+        arrterian.nix-env-selector
+
+        # Go language support
+        # golang.go
+
+
+        # Gitlens (GitKraken)
+        eamodio.gitlens
+
+        # AI shit
+        github.copilot
+        github.copilot-chat
+
+        # web shit
+        christian-kohler.npm-intellisense
+        esbenp.prettier-vscode 
+      ] 
+      ++ vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          name = "Go";
+          publisher = "golang";
+          version = "0.45.0";
+          sha256 = "sha256-w/74OCM1uAJzjlJ91eDoac6knD1+Imwfy6pXX9otHsY=";
+        }
+
+        {
+          name = "vscode-go-template";
+          publisher = "jinliming2";
+          version = "0.2.1";
+          #sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+          sha256 = "sha256-kvWaSuE4O98fXU+EKkplFI0Cfy2I7IiJ0/hXrVsk+6g=";
+        }
+      ];
+    })
 
   ];
   programs.fuse.userAllowOther = true;

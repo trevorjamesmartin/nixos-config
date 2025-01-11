@@ -29,9 +29,12 @@ in {
         mpv "https://rumble.com/v5pawl2-the-alex-jones-network-247-feed.html";
       '')
 
+      (pkgs.writeShellScriptBin "infowars" ''
+        mpv "https://rumble.com/v523y8c-infowars-network-feed-live-247.html";
+      '')
+
       (pkgs.writeShellScriptBin "Hypsi-GUI" ''
-      export DEBUG=OK
-      hypsi -webview
+        hypsi -webview
       '')
     ];
 
