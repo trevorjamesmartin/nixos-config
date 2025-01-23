@@ -35,15 +35,15 @@
 
   let
     localHost = {
-      name="desktop";       # hostname
-      arch="x86_64-linux";  # architecture
+      name="nixos";       # hostname
+      arch="aarch64-linux";  # architecture
       user="tm";            # username
     };
   in
   {
       
       homeConfigurations.${localHost.user} = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        pkgs = nixpkgs.legacyPackages.${localHost.arch};
         modules = [ 
           inputs.hyprland.homeManagerModules.default
           inputs.catppuccin.homeManagerModules.catppuccin

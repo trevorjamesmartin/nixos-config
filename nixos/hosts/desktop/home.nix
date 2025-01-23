@@ -106,6 +106,9 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    (pkgs.writeShellScriptBin "Hypsi-GUI" ''
+      hypsi -webview
+    '')
     #oh-my-zsh
     xarchiver
 

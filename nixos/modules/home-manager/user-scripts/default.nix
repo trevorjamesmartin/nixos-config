@@ -25,17 +25,6 @@ in {
         hyprctl dispatch tagwindow -- -nix
       '')
 
-      (pkgs.writeShellScriptBin "alexjones" ''
-        mpv "https://rumble.com/v5pawl2-the-alex-jones-network-247-feed.html";
-      '')
-
-      (pkgs.writeShellScriptBin "infowars" ''
-        mpv "https://rumble.com/v523y8c-infowars-network-feed-live-247.html";
-      '')
-
-      (pkgs.writeShellScriptBin "Hypsi-GUI" ''
-        hypsi -webview
-      '')
     ];
 
   };
